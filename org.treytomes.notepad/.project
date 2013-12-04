@@ -14,4 +14,21 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>.gitignore</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.gitignore</locationURI>
+		</link>
+		<link>
+			<name>LICENSE</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/LICENSE</locationURI>
+		</link>
+		<link>
+			<name>README.md</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/README.md</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
