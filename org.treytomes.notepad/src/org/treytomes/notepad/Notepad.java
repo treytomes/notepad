@@ -11,16 +11,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -33,12 +25,12 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 public class Notepad {
-
-	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	
 	private JFrame frmNotepad;
 	private JTextArea textArea;
-	private JFileChooser _fileChooser;
+	
+	private FileModel _fileModel;
+	private FileChooserView _fileChooserView;
 	
 	private static final WindowListener closeWindow = new WindowAdapter() {
 		@Override
@@ -79,6 +71,8 @@ public class Notepad {
 		    // If Nimbus is not available, you can set the GUI to another look and feel.
 		}
 		
+		_fileModel = new FileModel();
+		
 		initialize();
 	}
 
@@ -86,15 +80,14 @@ public class Notepad {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		configureFileChooser();
-		
 		frmNotepad = new JFrame();
 		frmNotepad.setTitle("Notepad");
 		frmNotepad.setIconImage(Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource("/org/treytomes/notepad/notepad.png")));
 		frmNotepad.setBounds(0, 0, 450, 300);
 		frmNotepad.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
 		frmNotepad.addWindowListener(closeWindow);
+		
+		_fileChooserView = new FileChooserView(frmNotepad, _fileModel);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		frmNotepad.getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -121,13 +114,9 @@ public class Notepad {
 		mntmOpen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				_fileChooser.updateUI();
-				int returnValue = _fileChooser.showOpenDialog(frmNotepad);
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					File file = _fileChooser.getSelectedFile();
-					textArea.setText(readTextFile(file));
-				} else {
-					System.out.println("Open command cancelled.");
+				if (_fileChooserView.openFile()) {
+					frmNotepad.setTitle(_fileModel.getName() + " - Notepad");
+					textArea.setText(_fileModel.getContents());
 				}
 			}
 		});
@@ -143,14 +132,9 @@ public class Notepad {
 		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
 		mntmSaveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_fileChooser.updateUI();
-				int returnValue = _fileChooser.showSaveDialog(frmNotepad);
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					File file = _fileChooser.getSelectedFile();
-					writeTextFile(file, textArea.getText());
-				} else {
-					System.out.println("Save command cancelled.");
-				}
+				_fileModel.setContents(textArea.getText());
+				_fileChooserView.saveFileAs();
+				frmNotepad.setTitle(_fileModel.getName() + " - Notepad");
 			}
 		});
 		mntmSaveAs.setMnemonic('A');
@@ -301,43 +285,5 @@ public class Notepad {
 		});
 		mntmNewMenuItem_1.setMnemonic('A');
 		mnHelp.add(mntmNewMenuItem_1);
-	}
-
-	private void configureFileChooser() {
-		_fileChooser = new JFileChooser();
-		//_fileChooser.setCurrentDirectory(new File("c:/"));
-	}
-	
-	private String readTextFile(File file) {
-		System.out.println("Reading text file: " + file.getName());
-		
-		StringBuilder sb = new StringBuilder();
-		try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING)) {
-			int nextCh = -1;
-			while ((nextCh = reader.read()) != -1) {
-				sb.append((char)nextCh);
-			}
-		} catch (IOException e) {
-			System.err.println("File not found: " + file.getName());
-		}
-		
-		System.out.println("Done reading text file.");
-		
-		return sb.toString();
-	}
-	
-	private void writeTextFile(File file, String text) {
-		System.out.println("Writing text file: " + file.getName());
-		
-		try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), ENCODING)) {
-			for (int index = 0; index < text.length(); index++) {
-				char ch = text.charAt(index);
-				writer.write(ch);
-			}
-		} catch (IOException e) {
-			System.err.println("Unable to write to file: " + file.getName());
-		}
-		
-		System.out.println("Done writing text file.");
 	}
 }
