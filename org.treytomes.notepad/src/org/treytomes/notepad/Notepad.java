@@ -3,17 +3,13 @@ package org.treytomes.notepad;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,19 +22,11 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 public class Notepad {
 	
-	private JFrame frmNotepad;
+	private NotepadView frmNotepad;
 	private JTextArea textArea;
 	
 	private FileModel _fileModel;
 	private FileChooserView _fileChooserView;
-	
-	private static final WindowListener closeWindow = new WindowAdapter() {
-		@Override
-		public void windowClosing(WindowEvent evt) {
-			evt.getWindow().setVisible(false);
-			evt.getWindow().dispose();
-		};
-	};
 
 	/**
 	 * Launch the application.
@@ -80,12 +68,7 @@ public class Notepad {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmNotepad = new JFrame();
-		frmNotepad.setTitle("Notepad");
-		frmNotepad.setIconImage(Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource("/org/treytomes/notepad/notepad.png")));
-		frmNotepad.setBounds(0, 0, 450, 300);
-		frmNotepad.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frmNotepad.addWindowListener(closeWindow);
+		frmNotepad = new NotepadView();
 		
 		_fileChooserView = new FileChooserView(frmNotepad, _fileModel);
 		

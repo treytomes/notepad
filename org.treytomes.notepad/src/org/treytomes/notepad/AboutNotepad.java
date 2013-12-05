@@ -84,7 +84,7 @@ public class AboutNotepad extends JDialog {
 			JLabel appIconLabel = new JLabel("");
 			contentPanel.add(appIconLabel, "1, 3, fill, top");
 			appIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			appIconLabel.setIcon(new ImageIcon(AboutNotepad.class.getResource("/org/treytomes/notepad/notepad.png")));
+			appIconLabel.setIcon(new ImageIcon(AboutNotepad.class.getResource("/org/treytomes/notepad/notepad_48.png")));
 		}
 		{
 			JLabel descriptionLabel = new JLabel("<html>\r\nTrey Tomes<br />\r\nVersion 1.0<br />\r\nCopyright \u00A9 2013 Trey Tomes.  All rights reserved.\r\n</html>");
