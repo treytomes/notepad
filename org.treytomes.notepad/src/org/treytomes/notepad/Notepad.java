@@ -97,11 +97,7 @@ public class Notepad {
 		mnfile.add(mntmSave);
 		
 		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
-		mntmSaveAs.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				_fileChooserView.saveFileAs();
-			}
-		});
+		mntmSaveAs.addActionListener(new FileSaveAsAction(_fileChooserView));
 		mntmSaveAs.setMnemonic('A');
 		mnfile.add(mntmSaveAs);
 		
