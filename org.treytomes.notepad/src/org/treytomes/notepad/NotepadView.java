@@ -43,6 +43,8 @@ public class NotepadView extends JFrame implements Observer {
 	private JTextArea _textArea;
 
 	public NotepadView() {
+		createTextArea();
+		
 		setModel(null);
 		
 		setTitle(WINDOW_TITLE);
@@ -57,8 +59,6 @@ public class NotepadView extends JFrame implements Observer {
 			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_48)),
 			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_256)),
 		}));
-		
-		createTextArea();
 	}
 	
 	public TextFileModel getModel() {
@@ -68,6 +68,7 @@ public class NotepadView extends JFrame implements Observer {
 	public void setModel(TextFileModel model) {
 		if (_model != null) {
 			_model.deleteObserver(this);
+			_textArea.getDocument().removeDocumentListener(_model);
 		}
 		if (model == null) {
 			System.err.println("Input model is null; creating a new model.");
@@ -75,6 +76,8 @@ public class NotepadView extends JFrame implements Observer {
 		}
 		_model = model;
 		_model.addObserver(this);
+		_textArea.getDocument().addDocumentListener(_model);
+		updateWindowTitle();
 	}
 	
 	public String getText() {
@@ -88,14 +91,7 @@ public class NotepadView extends JFrame implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof TextFileModel) {
-			switch (arg.toString()) {
-			case "name":
-				setTitle(String.format("%s - %s", _model.getName(), WINDOW_TITLE));
-				break;
-			case "contents":
-				setText(_model.getContents());
-				break;
-			}
+			updateWindowTitle();
 		}
 	}
 
@@ -108,25 +104,21 @@ public class NotepadView extends JFrame implements Observer {
 		_textArea.setLineWrap(true);
 		scrollPane.setViewportView(_textArea);
 		_textArea.setWrapStyleWord(true);
-		/*_textArea.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent evt) {
-				updateModelFromTextArea();
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent evt) {
-				updateModelFromTextArea();
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent evt) {
-				updateModelFromTextArea();
-			}
-		});*/
 	}
 	
-	/*private void updateModelFromTextArea() {
-		_model.setContents(_textArea.getText());
-	}*/
+	/**
+	 * Update the window title based on information in the model.
+	 */
+	private void updateWindowTitle() {
+		StringBuilder sb = new StringBuilder();
+		
+		if (_model.getNeedsSave()) {
+			sb.append('*');
+		}
+		sb.append(_model.getName());
+		sb.append(" - ");
+		sb.append(WINDOW_TITLE);
+		
+		setTitle(sb.toString());
+	}
 }

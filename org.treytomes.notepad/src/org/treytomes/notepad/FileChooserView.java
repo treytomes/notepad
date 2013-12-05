@@ -2,12 +2,14 @@ package org.treytomes.notepad;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class FileChooserView {
+public class FileChooserView implements Observer {
 
 	private static final String DEFAULT_DIRECTORY = null;
 	
@@ -63,7 +65,12 @@ public class FileChooserView {
 			System.out.println("Save command cancelled.");
 		}
 	}
-	
+
+	@Override
+	public void update(Observable o, Object arg) {
+		_fileChooser.setName(_model.getName());
+	}
+
 	private void configureFileChooser() {
 		_fileChooser = new JFileChooser();
 

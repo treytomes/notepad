@@ -99,7 +99,6 @@ public class Notepad {
 		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
 		mntmSaveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_fileModel.setContents(notepadView.getText());
 				_fileChooserView.saveFileAs();
 			}
 		});

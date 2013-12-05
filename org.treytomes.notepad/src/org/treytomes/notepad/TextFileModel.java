@@ -1,95 +1,83 @@
 package org.treytomes.notepad;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Observable;
 
-public class TextFileModel extends Observable {
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
-	private static final Charset ENCODING = StandardCharsets.UTF_8;
+public class TextFileModel extends Observable implements DocumentListener {
+
 	private static final String DEFAULT_FILENAME = "Untitled.txt";
 	
 	private File _file;
 	private String _contents;
+	private boolean _needsSave;
 	
 	public TextFileModel() {
 		_file = new File(DEFAULT_FILENAME);
-	}
-	
-	private File getFile() {
-		return _file;
-	}
-	
-	private void setFile(File file) {
-		_file = file;
-		setChanged();
-		notifyObservers("name");
+		_contents = "";
+		_needsSave = false;
 	}
 	
 	public String getName() {
-		return getFile().getName();
+		return _file.getName();
 	}
 	
 	public String getContents() {
 		return _contents;
 	}
 	
-	public void setContents(String contents) {
-		_contents = contents;
-		setChanged();
-		notifyObservers("contents");
+	public boolean getNeedsSave() {
+		return _needsSave;
+	}
+	
+	private void setNeedsSave(boolean value) {
+		_needsSave = value;
 	}
 
 	public void open(String path) {
-		setFile(new File(path));
-		setContents(readTextFile(_file));
+		_file = new File(path);
+		_contents = FileIO.readTextFile(_file);
+		setNeedsSave(false);
+		setChanged();
+		notifyObservers();
 	}
 	
 	public void save(String path) {
-		setFile(new File(path));
-		writeTextFile(getFile(), getContents());
+		_file = new File(path);
+		FileIO.writeTextFile(_file, _contents);
+		setNeedsSave(false);
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent evt) {
+		updateContents(evt);
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent evt) {
+		updateContents(evt);
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent evt) {
+		updateContents(evt);
 	}
 	
-	private static String readTextFile(File file) {
-		System.out.println("Reading text file: " + file.getName());
-		
-		StringBuilder sb = new StringBuilder();
-		
-		if (file.exists()) {
-			try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING)) {
-				int nextCh = -1;
-				while ((nextCh = reader.read()) != -1) {
-					sb.append((char)nextCh);
-				}
-			} catch (IOException e) {
-				System.err.println("Unable to read from file.");
-			}
-		} else {
-			System.err.println("File does not exist.");
+	private void updateContents(DocumentEvent evt) {
+		Document doc = evt.getDocument();
+		try {
+			_contents = doc.getText(0, doc.getLength());
+			setNeedsSave(true);
+			setChanged();
+			notifyObservers();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
 		}
-		
-		System.out.println("Done reading text file.");
-		
-		return sb.toString();
-	}
-	
-	private static void writeTextFile(File file, String text) {
-		System.out.println("Writing text file: " + file.getName());
-		
-		try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), ENCODING)) {
-			for (int index = 0; index < text.length(); index++) {
-				char ch = text.charAt(index);
-				writer.write(ch);
-			}
-		} catch (IOException e) {
-			System.err.println("Unable to write to file.");
-		}
-		
-		System.out.println("Done writing text file.");
 	}
 }
