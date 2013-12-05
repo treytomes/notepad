@@ -2,14 +2,10 @@ package org.treytomes.notepad;
 
 import java.awt.EventQueue;
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
 public class Notepad {
 	
-	private NotepadView _notepadView;
-	
 	private TextFileModel _fileModel;
+	private NotepadView _notepadView;
 
 	/**
 	 * Launch the application.
@@ -31,16 +27,7 @@ public class Notepad {
 	 * Create the application.
 	 */
 	public Notepad() {
-		try {
-		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-		        if ("Nimbus".equals(info.getName())) {
-		            UIManager.setLookAndFeel(info.getClassName());
-		            break;
-		        }
-		    }
-		} catch (Exception e) {
-		    // If Nimbus is not available, you can set the GUI to another look and feel.
-		}
+		LookAndFeelManager.setDefaultLookAndFeel();
 		
 		_fileModel = new TextFileModel();
 		_notepadView = new NotepadView();

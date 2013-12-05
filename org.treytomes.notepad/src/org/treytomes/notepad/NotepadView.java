@@ -24,7 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 public class NotepadView extends JFrame implements Observer {
@@ -274,7 +273,7 @@ public class NotepadView extends JFrame implements Observer {
 		mnChange.setMnemonic('C');
 		mnView.add(mnChange);
 		ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
-	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+	    for (LookAndFeelInfo info : LookAndFeelManager.getInstalledLookAndFeels()) {
 	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem();
 	    	lookAndFeelMenuItem.setModel(new LookAndFeelButtonModel(this, info));
 	        lookAndFeelButtonGroup.add(lookAndFeelMenuItem);
