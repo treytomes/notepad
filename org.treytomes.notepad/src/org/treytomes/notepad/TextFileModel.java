@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Observable;
 
-public class FileModel {
+public class TextFileModel extends Observable {
 
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final String DEFAULT_FILENAME = "Untitled.txt";
@@ -16,7 +17,7 @@ public class FileModel {
 	private File _file;
 	private String _contents;
 	
-	public FileModel() {
+	public TextFileModel() {
 		_file = new File(DEFAULT_FILENAME);
 	}
 	
@@ -26,6 +27,8 @@ public class FileModel {
 	
 	private void setFile(File file) {
 		_file = file;
+		setChanged();
+		notifyObservers("name");
 	}
 	
 	public String getName() {
@@ -38,6 +41,8 @@ public class FileModel {
 	
 	public void setContents(String contents) {
 		_contents = contents;
+		setChanged();
+		notifyObservers("contents");
 	}
 
 	public void open(String path) {

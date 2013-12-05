@@ -12,10 +12,10 @@ public class FileChooserView {
 	private static final String DEFAULT_DIRECTORY = null;
 	
 	private Component _parent;
-	private FileModel _model;
+	private TextFileModel _model;
 	private JFileChooser _fileChooser;
 	
-	public FileChooserView(Component parent, FileModel model) {
+	public FileChooserView(Component parent, TextFileModel model) {
 		_parent = parent;
 		_model = model;
 		
@@ -23,21 +23,21 @@ public class FileChooserView {
 	}
 	
 	public FileChooserView(Component parent) {
-		this(parent, new FileModel());
+		this(parent, new TextFileModel());
 	}
 	
 	public FileChooserView() {
 		this(null);
 	}
 	
-	public FileModel getModel() {
+	public TextFileModel getModel() {
 		return _model;
 	}
 	
-	public void setModel(FileModel model) {
+	public void setModel(TextFileModel model) {
 		if (model == null) {
 			System.err.println("Input model is null; creating a new model.");
-			model = new FileModel();
+			model = new TextFileModel();
 		}
 		_model = model;
 	}

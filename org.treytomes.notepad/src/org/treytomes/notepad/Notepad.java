@@ -1,8 +1,6 @@
 package org.treytomes.notepad;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -13,19 +11,16 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 public class Notepad {
 	
-	private NotepadView frmNotepad;
-	private JTextArea textArea;
+	private NotepadView notepadView;
 	
-	private FileModel _fileModel;
+	private TextFileModel _fileModel;
 	private FileChooserView _fileChooserView;
 
 	/**
@@ -36,7 +31,7 @@ public class Notepad {
 			public void run() {
 				try {
 					Notepad window = new Notepad();
-					window.frmNotepad.setVisible(true);
+					window.notepadView.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,7 +54,7 @@ public class Notepad {
 		    // If Nimbus is not available, you can set the GUI to another look and feel.
 		}
 		
-		_fileModel = new FileModel();
+		_fileModel = new TextFileModel();
 		
 		initialize();
 	}
@@ -68,21 +63,13 @@ public class Notepad {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmNotepad = new NotepadView();
+		notepadView = new NotepadView();
+		notepadView.setModel(_fileModel);
 		
-		_fileChooserView = new FileChooserView(frmNotepad, _fileModel);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		frmNotepad.getContentPane().add(scrollPane, BorderLayout.CENTER);
-		
-		textArea = new JTextArea();
-		textArea.setFont(new Font("Lucida Console", Font.PLAIN, 14));
-		textArea.setLineWrap(true);
-		scrollPane.setViewportView(textArea);
-		textArea.setWrapStyleWord(true);
+		_fileChooserView = new FileChooserView(notepadView, _fileModel);
 		
 		JMenuBar menuBar = new JMenuBar();
-		frmNotepad.setJMenuBar(menuBar);
+		notepadView.setJMenuBar(menuBar);
 		
 		JMenu mnfile = new JMenu("File");
 		mnfile.setMnemonic('F');
@@ -97,10 +84,7 @@ public class Notepad {
 		mntmOpen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				if (_fileChooserView.openFile()) {
-					frmNotepad.setTitle(_fileModel.getName() + " - Notepad");
-					textArea.setText(_fileModel.getContents());
-				}
+				_fileChooserView.openFile();
 			}
 		});
 		mntmOpen.setMnemonic('O');
@@ -115,9 +99,8 @@ public class Notepad {
 		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
 		mntmSaveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_fileModel.setContents(textArea.getText());
+				_fileModel.setContents(notepadView.getText());
 				_fileChooserView.saveFileAs();
-				frmNotepad.setTitle(_fileModel.getName() + " - Notepad");
 			}
 		});
 		mntmSaveAs.setMnemonic('A');
@@ -141,7 +124,7 @@ public class Notepad {
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				frmNotepad.dispatchEvent(new WindowEvent(frmNotepad, WindowEvent.WINDOW_CLOSING));
+				notepadView.dispatchEvent(new WindowEvent(notepadView, WindowEvent.WINDOW_CLOSING));
 			}
 		});
 		mntmExit.setMnemonic('x');
@@ -244,7 +227,7 @@ public class Notepad {
 		ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
 	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem();
-	    	lookAndFeelMenuItem.setModel(new LookAndFeelButtonModel(frmNotepad, info));
+	    	lookAndFeelMenuItem.setModel(new LookAndFeelButtonModel(notepadView, info));
 	        lookAndFeelButtonGroup.add(lookAndFeelMenuItem);
 	        mnChange.add(lookAndFeelMenuItem);
 	    }
@@ -263,7 +246,7 @@ public class Notepad {
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("About Notepad");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				new AboutNotepad(frmNotepad).setVisible(true);
+				new AboutNotepad(notepadView).setVisible(true);
 			}
 		});
 		mntmNewMenuItem_1.setMnemonic('A');
