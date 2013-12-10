@@ -1,4 +1,4 @@
-package org.treytomes.notepad;
+package org.treytomes.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,13 +7,17 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileIO {
+	
+	private static final Logger LOGGER = Logger.getLogger(FileIO.class.getName());
 	
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	
 	public static String readTextFile(File file) {
-		System.out.println("Reading text file: " + file.getName());
+		LOGGER.log(Level.INFO, "Reading text file: {0}", file.getName());
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -24,19 +28,19 @@ public class FileIO {
 					sb.append((char)nextCh);
 				}
 			} catch (IOException e) {
-				System.err.println("Unable to read from file.");
+				LOGGER.log(Level.WARNING, "Unable to read from file.");
 			}
 		} else {
-			System.err.println("File does not exist.");
+			LOGGER.log(Level.WARNING, "File does not exist.");
 		}
 		
-		System.out.println("Done reading text file.");
+		LOGGER.log(Level.INFO, "Done reading text file.");
 		
 		return sb.toString();
 	}
 	
 	public static void writeTextFile(File file, String text) {
-		System.out.println("Writing text file: " + file.getName());
+		LOGGER.log(Level.INFO, "Writing text file: {0}", file.getName());
 		
 		try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), ENCODING)) {
 			for (int index = 0; index < text.length(); index++) {
@@ -44,10 +48,10 @@ public class FileIO {
 				writer.write(ch);
 			}
 		} catch (IOException e) {
-			System.err.println("Unable to write to file.");
+			LOGGER.log(Level.WARNING, "Unable to write to file.");
 		}
 		
-		System.out.println("Done writing text file.");
+		LOGGER.log(Level.INFO, "Done writing text file.");
 	}
 
 }

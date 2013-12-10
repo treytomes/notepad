@@ -8,6 +8,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import org.treytomes.util.FileIO;
+
 public class TextFileModel extends Observable implements DocumentListener {
 
 	private static final String DEFAULT_FILENAME = "Untitled.txt";
