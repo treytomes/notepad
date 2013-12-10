@@ -1,8 +1,10 @@
-package org.treytomes.notepad;
+package org.treytomes.notepad.model;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+
+import org.treytomes.notepad.FileChooserView;
 
 public class FileOpenAction extends AbstractAction {
 	

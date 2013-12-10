@@ -1,4 +1,4 @@
-package org.treytomes.notepad;
+package org.treytomes.notepad.model;
 
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;

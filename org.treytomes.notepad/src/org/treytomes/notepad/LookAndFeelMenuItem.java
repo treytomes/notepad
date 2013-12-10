@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.ButtonModel;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.treytomes.notepad.model.LookAndFeelButtonModel;
+
 public class LookAndFeelMenuItem extends JRadioButtonMenuItem implements ActionListener {
 
 	private static final long serialVersionUID = -2821679071825616158L;

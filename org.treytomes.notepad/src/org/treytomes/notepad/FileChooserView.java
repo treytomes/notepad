@@ -11,6 +11,8 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.treytomes.notepad.model.TextFileDocument;
+
 public class FileChooserView implements Observer {
 
 	private static final Logger LOGGER = Logger.getLogger(FileChooserView.class.getName());

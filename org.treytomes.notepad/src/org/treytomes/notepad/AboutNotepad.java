@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
 
+import org.treytomes.notepad.model.WindowCloseAction;
 import org.treytomes.notepad.resources.IconSize;
 import org.treytomes.notepad.resources.NotepadIcon;
 

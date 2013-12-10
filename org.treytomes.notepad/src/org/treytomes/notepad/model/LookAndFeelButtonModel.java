@@ -1,4 +1,4 @@
-package org.treytomes.notepad;
+package org.treytomes.notepad.model;
 
 import javax.swing.DefaultButtonModel;
 import javax.swing.JFrame;
@@ -7,9 +7,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 public class LookAndFeelButtonModel extends DefaultButtonModel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1206429305419429393L;
 	
 	private JFrame _rootPaneSource;

@@ -1,10 +1,12 @@
-package org.treytomes.notepad;
+package org.treytomes.notepad.model;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.treytomes.notepad.FileChooserView;
 
 public class FileSaveAsAction extends AbstractAction implements DocumentListener {
 

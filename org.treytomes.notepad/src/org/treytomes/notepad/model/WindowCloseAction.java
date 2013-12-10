@@ -1,4 +1,4 @@
-package org.treytomes.notepad;
+package org.treytomes.notepad.model;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;

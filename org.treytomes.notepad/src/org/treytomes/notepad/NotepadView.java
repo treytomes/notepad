@@ -24,6 +24,13 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.treytomes.notepad.model.FileOpenAction;
+import org.treytomes.notepad.model.FileSaveAsAction;
+import org.treytomes.notepad.model.LookAndFeelButtonModel;
+import org.treytomes.notepad.model.LookAndFeelManager;
+import org.treytomes.notepad.model.TextFileDocument;
+import org.treytomes.notepad.model.WindowCloseAction;
+
 public class NotepadView extends JFrame implements PropertyChangeListener {
 	
 	private static final String WINDOW_TITLE = "Notepad";

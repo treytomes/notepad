@@ -3,6 +3,9 @@ package org.treytomes.notepad;
 import java.awt.EventQueue;
 import java.util.logging.Logger;
 
+import org.treytomes.notepad.model.LookAndFeelManager;
+import org.treytomes.notepad.model.TextFileDocument;
+
 public class Notepad {
 	
 	private static final Logger LOGGER = Logger.getLogger(Notepad.class.getName());
