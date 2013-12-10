@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
@@ -20,13 +22,13 @@ import org.treytomes.util.FileIO;
  * @author ttomes
  *
  */
-public class TextFileDocument extends PlainDocument {
+public class TextFileDocument extends PlainDocument implements DocumentListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(TextFileDocument.class.getName());
 	
 	private static final long serialVersionUID = 3307261840579009310L;
 
-	private static final String DEFAULT_FILENAME = "Untitled.txt";
+	private static final String DEFAULT_FILENAME = "";
 	private static final String PROPERTY_NEEDSSAVE = "needsSave";
 	private static final String PROPERTY_FILENAME = "filename";
 	
@@ -38,6 +40,7 @@ public class TextFileDocument extends PlainDocument {
 	public TextFileDocument() {
 		super();
 		
+		addDocumentListener(this);
 		_propertyChangeSupport = new PropertyChangeSupport(this);
 		
 		_file = new File(DEFAULT_FILENAME);
@@ -67,6 +70,10 @@ public class TextFileDocument extends PlainDocument {
 	
 	public boolean getNeedsSave() {
 		return _needsSave;
+	}
+	
+	public boolean isUntitled() {
+		return _file.getName().length() == 0;
 	}
 	
 	private void setNeedsSave(boolean value) {
@@ -115,5 +122,25 @@ public class TextFileDocument extends PlainDocument {
 			e.printStackTrace();
 			LOGGER.log(Level.WARNING, "Unable to save the file: {0}", _file);
 		}
+	}
+
+	
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		onContentChanged();
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		onContentChanged();
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		onContentChanged();
+	}
+	
+	private void onContentChanged() {
+		setNeedsSave(true);
 	}
 }

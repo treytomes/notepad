@@ -313,8 +313,11 @@ public class NotepadView extends JFrame implements PropertyChangeListener {
 		if (_model.getNeedsSave()) {
 			sb.append('*');
 		}
-		sb.append(_model.getName());
-		sb.append(" - ");
+		if (!_model.isUntitled()) {
+			sb.append(_model.getName());
+			sb.append(" - ");
+		}
+		
 		sb.append(WINDOW_TITLE);
 		
 		setTitle(sb.toString());
