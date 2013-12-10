@@ -23,20 +23,19 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.util.logging.Logger;
 
-public class AboutNotepad extends JDialog {
+public class AboutNotepadDialog extends JDialog {
 
 	private static final long serialVersionUID = -8373369369401968282L;
 	
-	private static final Logger LOGGER = Logger.getLogger(AboutNotepad.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AboutNotepadDialog.class.getName());
+	private static final String HTML_DESCRIPTION = "<html>\r\nTrey Tomes<br />\r\nVersion 1.0<br />\r\nCopyright \u00A9 2013 Trey Tomes.  All rights reserved.\r\n</html>";
 
 	private WindowCloseAction _closeWindowAction;
-	
-	private final JPanel contentPanel = new JPanel();
 
 	/**
 	 * Create the dialog.
 	 */
-	public AboutNotepad(JFrame parent) {
+	public AboutNotepadDialog(JFrame parent) {
 		super(parent, "About Notepad", true);
 		
 		LOGGER.info("Loading the About dialog...");
@@ -46,16 +45,26 @@ public class AboutNotepad extends JDialog {
 		addWindowListener(_closeWindowAction);
 		
 		setResizable(false);
-		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(32, 32, 408, 196);
-		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("default:grow"),},
-			new RowSpec[] {
-				RowSpec.decode("fill:default:grow"),
-				RowSpec.decode("bottom:min"),}));
+		
+		getContentPane().setLayout(new FormLayout(
+			new ColumnSpec[] { ColumnSpec.decode("default:grow") },
+			new RowSpec[] { RowSpec.decode("fill:default:grow"), RowSpec.decode("bottom:min")}));
+		
+		getContentPane().add(createContentPanel(), "1, 1, fill, fill");
+		
+		getContentPane().add(createButtonPanel(), "1, 2, fill, bottom");
+		
+		setLocationRelativeTo(parent);
+		
+		LOGGER.info("The About dialog is now loaded.");
+	}
+	
+	private JPanel createContentPanel() {
+		JPanel contentPanel = new JPanel();
+		
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, "1, 1, fill, fill");
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("48dlu"),
 				ColumnSpec.decode("default:grow"),},
@@ -78,25 +87,22 @@ public class AboutNotepad extends JDialog {
 			appIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			appIconLabel.setIcon(NotepadIcon.getIcon(IconSize.Size48));
 		}
-		{
-			JLabel descriptionLabel = new JLabel("<html>\r\nTrey Tomes<br />\r\nVersion 1.0<br />\r\nCopyright \u00A9 2013 Trey Tomes.  All rights reserved.\r\n</html>");
-			contentPanel.add(descriptionLabel, "2, 3, fill, top");
-		}
-		{
-			JPanel buttonPanel = new JPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPanel, "1, 2, fill, bottom");
-			{
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(_closeWindowAction);
-				okButton.setActionCommand("OK");
-				buttonPanel.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-		}
 		
-		setLocationRelativeTo(parent);
+		contentPanel.add(new JLabel(HTML_DESCRIPTION), "2, 3, fill, top");
 		
-		LOGGER.info("The About dialog is now loaded.");
+		return contentPanel;
+	}
+	
+	private JPanel createButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+		JButton okButton = new JButton("OK");
+		okButton.addActionListener(_closeWindowAction);
+		okButton.setActionCommand("OK");
+		buttonPanel.add(okButton);
+		getRootPane().setDefaultButton(okButton);
+		
+		return buttonPanel;
 	}
 }

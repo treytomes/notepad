@@ -11,7 +11,7 @@ public class Notepad {
 	private static final Logger LOGGER = Logger.getLogger(Notepad.class.getName());
 	
 	private TextFileDocument _fileModel;
-	private NotepadView _notepadView;
+	private NotepadWindow _notepadView;
 
 	/**
 	 * Launch the application.
@@ -42,6 +42,6 @@ public class Notepad {
 		_fileModel = new TextFileDocument();
 		
 		LOGGER.info("Creating the notepad view.");
-		_notepadView = new NotepadView(_fileModel);
+		_notepadView = new NotepadWindow(_fileModel);
 	}
 }

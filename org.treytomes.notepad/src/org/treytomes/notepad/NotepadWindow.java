@@ -31,7 +31,7 @@ import org.treytomes.notepad.model.LookAndFeelManager;
 import org.treytomes.notepad.model.TextFileDocument;
 import org.treytomes.notepad.model.WindowCloseAction;
 
-public class NotepadView extends JFrame implements PropertyChangeListener {
+public class NotepadWindow extends JFrame implements PropertyChangeListener {
 	
 	private static final String WINDOW_TITLE = "Notepad";
 	private static final int WINDOW_WIDTH = 600;
@@ -47,13 +47,13 @@ public class NotepadView extends JFrame implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 2512504132006442564L;
 	
-	private static final Logger LOGGER = Logger.getLogger(NotepadView.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(NotepadWindow.class.getName());
 
 	private TextFileDocument _model;
 	private JTextArea _textArea;
 	private FileChooserView _fileChooser;
 
-	public NotepadView(TextFileDocument model) {
+	public NotepadWindow(TextFileDocument model) {
 		LOGGER.info("Loading the main window...");
 		
 		setModel(model);
@@ -78,7 +78,7 @@ public class NotepadView extends JFrame implements PropertyChangeListener {
 		LOGGER.info("The main window is now loaded.");
 	}
 	
-	public NotepadView() {
+	public NotepadWindow() {
 		this(null);
 	}
 	
@@ -304,7 +304,7 @@ public class NotepadView extends JFrame implements PropertyChangeListener {
 		JMenuItem aboutMenuItem = new JMenuItem("About Notepad");
 		aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				new AboutNotepad(NotepadView.this).setVisible(true);
+				new AboutNotepadDialog(NotepadWindow.this).setVisible(true);
 			}
 		});
 		aboutMenuItem.setMnemonic('A');
