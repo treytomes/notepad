@@ -17,6 +17,8 @@ public class FileIO {
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	
 	public static String readTextFile(File file) {
+		//file = new File("c:/GetWorkItems.txt");
+		
 		LOGGER.log(Level.INFO, "Reading text file: {0}", file.getName());
 		
 		StringBuilder sb = new StringBuilder();
@@ -28,14 +30,13 @@ public class FileIO {
 					sb.append((char)nextCh);
 				}
 			} catch (IOException e) {
-				LOGGER.log(Level.WARNING, "Unable to read from file.");
+				e.printStackTrace();
 			}
 		} else {
 			LOGGER.log(Level.WARNING, "File does not exist.");
 		}
 		
 		LOGGER.log(Level.INFO, "Done reading text file.");
-		
 		return sb.toString();
 	}
 	
