@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -11,6 +13,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class FileChooserView implements Observer {
 
+	private static final Logger LOGGER = Logger.getLogger(FileChooserView.class.getName());
+	
 	private static final String DEFAULT_DIRECTORY = null;
 	
 	private Component _parent;
@@ -33,8 +37,9 @@ public class FileChooserView implements Observer {
 	}
 	
 	public void setModel(TextFileModel model) {
+		LOGGER.log(Level.INFO, "Assigning a new model.");
 		if (model == null) {
-			System.err.println("Input model is null; creating a new model.");
+			LOGGER.log(Level.WARNING, "Input model is null; creating a new model.");
 			model = new TextFileModel();
 		}
 		_model = model;
@@ -44,10 +49,12 @@ public class FileChooserView implements Observer {
 		_fileChooser.updateUI();
 		int returnValue = _fileChooser.showOpenDialog(_parent);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
-			_model.open(_fileChooser.getSelectedFile().getPath());
+			File selectedFile = _fileChooser.getSelectedFile();
+			LOGGER.log(Level.INFO, "Opening: {0}", selectedFile.getName());
+			_model.open(selectedFile.getPath());
 			return true;
 		} else {
-			System.out.println("Open command cancelled.");
+			LOGGER.log(Level.INFO, "Open command cancelled.");
 			return false;
 		}
 	}
@@ -58,7 +65,7 @@ public class FileChooserView implements Observer {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			_model.save(_fileChooser.getSelectedFile().getPath());
 		} else {
-			System.out.println("Save command cancelled.");
+			LOGGER.log(Level.INFO, "Save command cancelled.");
 		}
 	}
 
