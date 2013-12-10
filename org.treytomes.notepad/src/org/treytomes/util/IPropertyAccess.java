@@ -21,5 +21,5 @@ public interface IPropertyAccess {
 	 * @return
 	 * @throws PropertyNotDefinedException
 	 */
-	String getProperty(String propertyName) throws PropertyNotDefinedException;
+	Object getProperty(String propertyName) throws PropertyNotDefinedException;
 }

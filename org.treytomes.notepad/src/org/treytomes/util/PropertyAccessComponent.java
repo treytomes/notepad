@@ -38,7 +38,8 @@ public class PropertyAccessComponent implements IPropertyAccess {
 	 * @return
 	 * @throws PropertyNotDefinedException
 	 */
-	public String getProperty(String propertyName) throws PropertyNotDefinedException {
+	@Override
+	public Object getProperty(String propertyName) throws PropertyNotDefinedException {
 		if (isPropertyDefined(propertyName)) {
 			Method method = _properties.get(propertyName);
 			try {
@@ -68,7 +69,7 @@ public class PropertyAccessComponent implements IPropertyAccess {
 		}
 	}
 
-	private String invokePropertyMethod(Method method) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return method.invoke(_parent).toString();
+	private Object invokePropertyMethod(Method method) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		return method.invoke(_parent);
 	}
 }

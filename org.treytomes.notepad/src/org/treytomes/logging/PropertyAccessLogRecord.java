@@ -61,7 +61,7 @@ public class PropertyAccessLogRecord extends LogRecord implements IPropertyAcces
 	 * @return
 	 * @throws PropertyNotDefinedException
 	 */
-	public String getProperty(String propertyName) throws PropertyNotDefinedException {
+	public Object getProperty(String propertyName) throws PropertyNotDefinedException {
 		return _propertyAccess.getProperty(propertyName);
 	}
 	

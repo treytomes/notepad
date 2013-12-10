@@ -24,7 +24,7 @@ public class PropertyLogFormatter extends Formatter {
 			if (outputMessage.contains(qualifiedPropertyName)) {
 				String propertyValue;
 				try {
-					propertyValue = propRecord.getProperty(propertyName);
+					propertyValue = propRecord.getProperty(propertyName).toString();
 					propertyValue = replaceRegexCharacters(propertyValue);
 					outputMessage = outputMessage.replaceAll(String.format("\\{%s\\}", propertyName), propertyValue);
 				} catch (PropertyNotDefinedException e) {
