@@ -27,6 +27,7 @@ public class WindowCloseAction extends AbstractAction implements WindowListener 
 	public WindowCloseAction(Window window) {
 		_window = window;
 		_actionNameCloseWindow = String.format("%s.%s", _window.getClass().getName(), ACTION_CLOSEWINDOW);
+		_closeOnEscape = false;
 	}
 
 	@Override

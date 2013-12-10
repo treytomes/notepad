@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -43,14 +42,14 @@ public class NotepadView extends JFrame {
 
 	private TextFileDocument _model;
 	private JTextArea _textArea;
-	private FileChooserView _fileChooserView;
+	private FileChooserView _fileChooser;
 
 	public NotepadView(TextFileDocument model) {
 		LOGGER.info("Loading the main window...");
 		
 		setModel(model);
 		createTextArea();
-		_fileChooserView = new FileChooserView(this, model);
+		_fileChooser = new FileChooserView(this, model);
 		
 		createMenu();
 		
@@ -98,8 +97,8 @@ public class NotepadView extends JFrame {
 		if (_textArea != null) {
 			_textArea.setDocument(_model);
 		}
-		if (_fileChooserView != null) {
-			_fileChooserView.setModel(_model);
+		if (_fileChooser != null) {
+			_fileChooser.setModel(_model);
 		}
 		
 		LOGGER.info("The new model is now assigned.");
@@ -133,178 +132,161 @@ public class NotepadView extends JFrame {
 		fileMenu.setMnemonic('F');
 		menuBar.add(fileMenu);
 		
-		JMenuItem mntmNew = new JMenuItem("New");
-		mntmNew.setMnemonic('N');
-		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-		fileMenu.add(mntmNew);
+		JMenuItem newMenuItem = new JMenuItem("New");
+		newMenuItem.setMnemonic('N');
+		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+		fileMenu.add(newMenuItem);
 		
-		JMenuItem mntmOpen = new JMenuItem("Open...");
-		mntmOpen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				_fileChooserView.openFile();
-				updateWindowTitle();
-			}
-		});
-		mntmOpen.setMnemonic('O');
-		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-		fileMenu.add(mntmOpen);
+		JMenuItem openMenuItem = new JMenuItem("Open...");
+		openMenuItem.addActionListener(new FileOpenAction(_fileChooser));
+		openMenuItem.setMnemonic('O');
+		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+		fileMenu.add(openMenuItem);
 		
-		JMenuItem mntmSave = new JMenuItem("Save");
-		mntmSave.setMnemonic('S');
-		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-		fileMenu.add(mntmSave);
+		JMenuItem saveMenuItem = new JMenuItem("Save");
+		saveMenuItem.setMnemonic('S');
+		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		fileMenu.add(saveMenuItem);
 		
-		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
-		mntmSaveAs.addActionListener(new FileSaveAsAction(_fileChooserView));
-		mntmSaveAs.setMnemonic('A');
-		fileMenu.add(mntmSaveAs);
+		JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
+		saveAsMenuItem.addActionListener(new FileSaveAsAction(_fileChooser));
+		saveAsMenuItem.setMnemonic('A');
+		fileMenu.add(saveAsMenuItem);
 		
-		JSeparator separator_4 = new JSeparator();
-		fileMenu.add(separator_4);
+		fileMenu.add(new JSeparator());
 		
-		JMenuItem mntmPageSetup = new JMenuItem("Page Setup...");
-		mntmPageSetup.setMnemonic('u');
-		fileMenu.add(mntmPageSetup);
+		JMenuItem pageSetupMenuItem = new JMenuItem("Page Setup...");
+		pageSetupMenuItem.setMnemonic('u');
+		fileMenu.add(pageSetupMenuItem);
 		
-		JMenuItem mntmPrint = new JMenuItem("Print...");
-		mntmPrint.setMnemonic('P');
-		mntmPrint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
-		fileMenu.add(mntmPrint);
+		JMenuItem printMenuItem = new JMenuItem("Print...");
+		printMenuItem.setMnemonic('P');
+		printMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
+		fileMenu.add(printMenuItem);
 		
-		JSeparator separator_5 = new JSeparator();
-		fileMenu.add(separator_5);
+		fileMenu.add(new JSeparator());
 		
-		JMenuItem mntmExit = new JMenuItem("Exit");
-		mntmExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				dispatchEvent(new WindowEvent(NotepadView.this, WindowEvent.WINDOW_CLOSING));
-			}
-		});
-		mntmExit.setMnemonic('x');
-		fileMenu.add(mntmExit);
+		JMenuItem exitMenuItem = new JMenuItem("Exit");
+		exitMenuItem.addActionListener(new WindowCloseAction(this));
+		exitMenuItem.setMnemonic('x');
+		fileMenu.add(exitMenuItem);
 		
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic('E');
 		menuBar.add(editMenu);
 		
-		JMenuItem mntmUndo = new JMenuItem("Undo");
-		mntmUndo.setMnemonic('U');
-		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-		editMenu.add(mntmUndo);
+		JMenuItem undoMenuItem = new JMenuItem("Undo");
+		undoMenuItem.setMnemonic('U');
+		undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
+		editMenu.add(undoMenuItem);
 		
-		JSeparator separator_1 = new JSeparator();
-		editMenu.add(separator_1);
+		editMenu.add(new JSeparator());
 		
-		JMenuItem mntmCut = new JMenuItem("Cut");
-		mntmCut.setMnemonic('t');
-		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-		editMenu.add(mntmCut);
+		JMenuItem cutMenuItem = new JMenuItem("Cut");
+		cutMenuItem.setMnemonic('t');
+		cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
+		editMenu.add(cutMenuItem);
 		
-		JMenuItem mntmCope = new JMenuItem("Copy");
-		mntmCope.setMnemonic('C');
-		mntmCope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-		editMenu.add(mntmCope);
+		JMenuItem copyMenuItem = new JMenuItem("Copy");
+		copyMenuItem.setMnemonic('C');
+		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+		editMenu.add(copyMenuItem);
 		
-		JMenuItem mntmPaste = new JMenuItem("Paste");
-		mntmPaste.setMnemonic('P');
-		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-		editMenu.add(mntmPaste);
+		JMenuItem pasteMenuItem = new JMenuItem("Paste");
+		pasteMenuItem.setMnemonic('P');
+		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
+		editMenu.add(pasteMenuItem);
 		
-		JMenuItem mntmDelete = new JMenuItem("Delete");
-		mntmDelete.setMnemonic('l');
-		mntmDelete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-		editMenu.add(mntmDelete);
+		JMenuItem deleteMenuItem = new JMenuItem("Delete");
+		deleteMenuItem.setMnemonic('l');
+		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+		editMenu.add(deleteMenuItem);
 		
-		JSeparator separator_2 = new JSeparator();
-		editMenu.add(separator_2);
+		editMenu.add(new JSeparator());
 		
-		JMenuItem mntmFind = new JMenuItem("Find...");
-		mntmFind.setMnemonic('F');
-		mntmFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-		editMenu.add(mntmFind);
+		JMenuItem findMenuItem = new JMenuItem("Find...");
+		findMenuItem.setMnemonic('F');
+		findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		editMenu.add(findMenuItem);
 		
-		JMenuItem mntmFindNext = new JMenuItem("Find Next");
-		mntmFindNext.setMnemonic('N');
-		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
-		editMenu.add(mntmFindNext);
+		JMenuItem findNextMenuItem = new JMenuItem("Find Next");
+		findNextMenuItem.setMnemonic('N');
+		findNextMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
+		editMenu.add(findNextMenuItem);
 		
-		JMenuItem mntmReplace = new JMenuItem("Replace...");
-		mntmReplace.setMnemonic('R');
-		mntmReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-		editMenu.add(mntmReplace);
+		JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+		replaceMenuItem.setMnemonic('R');
+		replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+		editMenu.add(replaceMenuItem);
 		
-		JMenuItem mntmGoto = new JMenuItem("Goto...");
-		mntmGoto.setMnemonic('G');
-		mntmGoto.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-		editMenu.add(mntmGoto);
+		JMenuItem gotoMenuItem = new JMenuItem("Goto...");
+		gotoMenuItem.setMnemonic('G');
+		gotoMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
+		editMenu.add(gotoMenuItem);
 		
-		JSeparator separator_3 = new JSeparator();
-		editMenu.add(separator_3);
+		editMenu.add(new JSeparator());
 		
-		JMenuItem mntmSelectAll = new JMenuItem("Select All");
-		mntmSelectAll.setMnemonic('A');
-		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-		editMenu.add(mntmSelectAll);
+		JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+		selectAllMenuItem.setMnemonic('A');
+		selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
+		editMenu.add(selectAllMenuItem);
 		
-		JMenuItem mntmTimedate = new JMenuItem("Time/Date");
-		mntmTimedate.setMnemonic('D');
-		mntmTimedate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-		editMenu.add(mntmTimedate);
+		JMenuItem timeDateMenuItem = new JMenuItem("Time/Date");
+		timeDateMenuItem.setMnemonic('D');
+		timeDateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+		editMenu.add(timeDateMenuItem);
 		
-		JMenu mnFormat = new JMenu("Format");
-		mnFormat.setMnemonic('o');
-		menuBar.add(mnFormat);
+		JMenu formatMenu = new JMenu("Format");
+		formatMenu.setMnemonic('o');
+		menuBar.add(formatMenu);
 		
-		JMenuItem mntmWordWrap = new JMenuItem("Word Wrap");
-		mntmWordWrap.setMnemonic('W');
-		mnFormat.add(mntmWordWrap);
+		JMenuItem wordWrapMenuItem = new JMenuItem("Word Wrap");
+		wordWrapMenuItem.setMnemonic('W');
+		formatMenu.add(wordWrapMenuItem);
 		
-		JMenuItem mntmFont = new JMenuItem("Font...");
-		mntmFont.setMnemonic('F');
-		mnFormat.add(mntmFont);
+		JMenuItem fontMenuItem = new JMenuItem("Font...");
+		fontMenuItem.setMnemonic('F');
+		formatMenu.add(fontMenuItem);
 		
 		JMenu viewMenu = new JMenu("View");
 		viewMenu.setMnemonic('V');
 		menuBar.add(viewMenu);
 		
-		JMenuItem mntmStatusBar = new JMenuItem("Status Bar");
-		mntmStatusBar.setMnemonic('S');
-		viewMenu.add(mntmStatusBar);
+		JMenuItem statusBarMenuItem = new JMenuItem("Status Bar");
+		statusBarMenuItem.setMnemonic('S');
+		viewMenu.add(statusBarMenuItem);
 		
-		JSeparator separator_6 = new JSeparator();
-		viewMenu.add(separator_6);
+		viewMenu.add(new JSeparator());
 		
-		JMenu mnChange = new JMenu("Change Look And Feel...");
-		mnChange.setMnemonic('C');
-		viewMenu.add(mnChange);
+		JMenu changeLookMenuItem = new JMenu("Change Look And Feel...");
+		changeLookMenuItem.setMnemonic('C');
+		viewMenu.add(changeLookMenuItem);
 		ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
 	    for (LookAndFeelInfo info : LookAndFeelManager.getInstalledLookAndFeels()) {
 	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem();
 	    	lookAndFeelMenuItem.setModel(new LookAndFeelButtonModel(this, info));
 	        lookAndFeelButtonGroup.add(lookAndFeelMenuItem);
-	        mnChange.add(lookAndFeelMenuItem);
+	        changeLookMenuItem.add(lookAndFeelMenuItem);
 	    }
 		
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic('H');
 		menuBar.add(helpMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("View Help");
-		mntmNewMenuItem.setMnemonic('H');
-		helpMenu.add(mntmNewMenuItem);
+		JMenuItem viewHelpMenuItem = new JMenuItem("View Help");
+		viewHelpMenuItem.setMnemonic('H');
+		helpMenu.add(viewHelpMenuItem);
 		
-		JSeparator separator = new JSeparator();
-		helpMenu.add(separator);
+		helpMenu.add(new JSeparator());
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("About Notepad");
-		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+		JMenuItem aboutMenuItem = new JMenuItem("About Notepad");
+		aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				new AboutNotepad(NotepadView.this).setVisible(true);
 			}
 		});
-		mntmNewMenuItem_1.setMnemonic('A');
-		helpMenu.add(mntmNewMenuItem_1);
+		aboutMenuItem.setMnemonic('A');
+		helpMenu.add(aboutMenuItem);
 	}
 	
 	/**
