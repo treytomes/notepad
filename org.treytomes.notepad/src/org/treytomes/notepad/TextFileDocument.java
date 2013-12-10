@@ -1,5 +1,7 @@
 package org.treytomes.notepad;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +13,13 @@ import javax.swing.text.PlainDocument;
 
 import org.treytomes.util.FileIO;
 
+/**
+ * 2 properties are exposed to the PropertyChangeListener:
+ * 	* needsSave
+ * 	* filename
+ * @author ttomes
+ *
+ */
 public class TextFileDocument extends PlainDocument {
 	
 	private static final Logger LOGGER = Logger.getLogger(TextFileDocument.class.getName());
@@ -18,6 +27,10 @@ public class TextFileDocument extends PlainDocument {
 	private static final long serialVersionUID = 3307261840579009310L;
 
 	private static final String DEFAULT_FILENAME = "Untitled.txt";
+	private static final String PROPERTY_NEEDSSAVE = "needsSave";
+	private static final String PROPERTY_FILENAME = "filename";
+	
+	private PropertyChangeSupport _propertyChangeSupport;
 	
 	private File _file;
 	private boolean _needsSave;
@@ -25,10 +38,27 @@ public class TextFileDocument extends PlainDocument {
 	public TextFileDocument() {
 		super();
 		
+		_propertyChangeSupport = new PropertyChangeSupport(this);
+		
 		_file = new File(DEFAULT_FILENAME);
 		_needsSave = false;
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		_propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		_propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+	
+	private void setFile(File file) {
+		String oldFilename = _file.getName();
+		_file = file;
 		
-		// TODO: When the filename changes, update NotepadView.
+		if (!_file.getName().equals(oldFilename)) {
+			_propertyChangeSupport.firePropertyChange(PROPERTY_FILENAME, oldFilename, _file.getName());
+		}
 	}
 	
 	public String getName() {
@@ -40,11 +70,24 @@ public class TextFileDocument extends PlainDocument {
 	}
 	
 	private void setNeedsSave(boolean value) {
-		_needsSave = value;
+		if (_needsSave != value) {
+			boolean oldValue = _needsSave;
+			_needsSave = value;
+			_propertyChangeSupport.firePropertyChange(PROPERTY_NEEDSSAVE, oldValue, value);
+		}
+	}
+	
+	private String getContents() throws BadLocationException {
+		return getText(0, getLength());
 	}
 
+	private void setContents(String contents) throws BadLocationException {
+		remove(0, getLength());
+		insertString(0, contents, null);
+	}
+	
 	public void open(File file) {
-		_file = file;
+		setFile(file);
 		
 		String contents = FileIO.readTextFile(file);
 		
@@ -54,21 +97,18 @@ public class TextFileDocument extends PlainDocument {
 		contents = new String(contentBytes, dstEncoding);
 		
 		try {
-			remove(0, getLength());
-			insertString(0, contents, null);
+			setContents(contents);
+			setNeedsSave(false);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
-			LOGGER.log(Level.WARNING, "Unable to set document text from file: {0}", file);
+			LOGGER.log(Level.WARNING, "Unable to set document text.");
 		}
-		
-		setNeedsSave(false);
 	}
 	
 	public void save(File file) {
-		_file = file;
+		setFile(file);
 		
 		try {
-			String contents = getText(0, getLength());
+			String contents = getContents();
 			FileIO.writeTextFile(_file, contents);
 			setNeedsSave(false);
 		} catch (BadLocationException e) {

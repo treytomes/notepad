@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -22,11 +24,11 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-public class NotepadView extends JFrame {
+public class NotepadView extends JFrame implements PropertyChangeListener {
 	
 	private static final String WINDOW_TITLE = "Notepad";
-	private static final int WINDOW_WIDTH = 450;
-	private static final int WINDOW_HEIGHT = 300;
+	private static final int WINDOW_WIDTH = 600;
+	private static final int WINDOW_HEIGHT = 400;
 
 	private static final String WINDOW_ICON_16 = "/org/treytomes/notepad/resources/notepad_16.png";
 	private static final String WINDOW_ICON_24 = "/org/treytomes/notepad/resources/notepad_24.png";
@@ -86,6 +88,7 @@ public class NotepadView extends JFrame {
 		
 		if (_model != null) {
 			LOGGER.info("Removing the old model.");
+			_model.removePropertyChangeListener(this);
 			_model = null;
 		}
 		if (model == null) {
@@ -93,6 +96,7 @@ public class NotepadView extends JFrame {
 			model = new TextFileDocument();
 		}
 		_model = model;
+		_model.addPropertyChangeListener(this);
 		updateWindowTitle();
 		if (_textArea != null) {
 			_textArea.setDocument(_model);
@@ -110,6 +114,17 @@ public class NotepadView extends JFrame {
 	
 	public void setText(String value) {
 		_textArea.setText(value);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getSource() instanceof TextFileDocument) {
+			switch (evt.getPropertyName()) {
+			case "needsSave":
+			case "filename":
+				updateWindowTitle();
+			}
+		}
 	}
 
 	private void createTextArea() {
