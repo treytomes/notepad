@@ -7,7 +7,7 @@ public class Notepad {
 	
 	private static final Logger LOGGER = Logger.getLogger(Notepad.class.getName());
 	
-	private TextFileModel _fileModel;
+	private TextFileDocument _fileModel;
 	private NotepadView _notepadView;
 
 	/**
@@ -36,7 +36,7 @@ public class Notepad {
 		LookAndFeelManager.setDefaultLookAndFeel();
 		
 		LOGGER.info("Creating the file model.");
-		_fileModel = new TextFileModel();
+		_fileModel = new TextFileDocument();
 		
 		LOGGER.info("Creating the notepad view.");
 		_notepadView = new NotepadView(_fileModel);

@@ -18,29 +18,33 @@ public class FileChooserView implements Observer {
 	private static final String DEFAULT_DIRECTORY = null;
 	
 	private Component _parent;
-	private TextFileModel _model;
+	private TextFileDocument _model;
 	private JFileChooser _fileChooser;
 	
-	public FileChooserView(Component parent) {
+	public FileChooserView(Component parent, TextFileDocument model) {
 		_parent = parent;
-		setModel(null);
+		setModel(model);
 		
 		configureFileChooser();
 	}
 	
-	public FileChooserView() {
-		this(null);
+	public FileChooserView(TextFileDocument model) {
+		this(null, model);
 	}
 	
-	public TextFileModel getModel() {
+	public TextFileDocument getModel() {
 		return _model;
 	}
 	
-	public void setModel(TextFileModel model) {
+	public void setModel(TextFileDocument model) {
+		if (_model == model) {
+			return;
+		}
+		
 		LOGGER.log(Level.INFO, "Assigning a new model.");
 		if (model == null) {
 			LOGGER.log(Level.WARNING, "Input model is null; creating a new model.");
-			model = new TextFileModel();
+			model = new TextFileDocument();
 		}
 		_model = model;
 	}
@@ -51,7 +55,7 @@ public class FileChooserView implements Observer {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = _fileChooser.getSelectedFile();
 			LOGGER.log(Level.INFO, "Opening: {0}", selectedFile.getName());
-			_model.open(selectedFile.getPath());
+			_model.open(selectedFile);
 			return true;
 		} else {
 			LOGGER.log(Level.INFO, "Open command cancelled.");
@@ -63,7 +67,7 @@ public class FileChooserView implements Observer {
 		_fileChooser.updateUI();
 		int returnValue = _fileChooser.showSaveDialog(_parent);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
-			_model.save(_fileChooser.getSelectedFile().getPath());
+			_model.save(_fileChooser.getSelectedFile());
 		} else {
 			LOGGER.log(Level.INFO, "Save command cancelled.");
 		}

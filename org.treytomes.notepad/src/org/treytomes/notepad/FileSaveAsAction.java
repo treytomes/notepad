@@ -1,12 +1,12 @@
 package org.treytomes.notepad;
 
 import java.awt.event.ActionEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
-public class FileSaveAsAction extends AbstractAction implements Observer {
+public class FileSaveAsAction extends AbstractAction implements DocumentListener {
 
 	private static final long serialVersionUID = 8011881956860273769L;
 	
@@ -14,7 +14,7 @@ public class FileSaveAsAction extends AbstractAction implements Observer {
 	
 	public FileSaveAsAction(FileChooserView fileChooser) {
 		_fileChooser = fileChooser;
-		getModel().addObserver(this);
+		getModel().addDocumentListener(this);
 	}
 
 	@Override
@@ -23,11 +23,25 @@ public class FileSaveAsAction extends AbstractAction implements Observer {
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public void changedUpdate(DocumentEvent evt) {
+		update();
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent evt) {
+		update();
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent evt) {
+		update();
+	}
+
+	public void update() {
 		setEnabled(getModel().getNeedsSave()); // && _model.isUntitled());
 	}
 	
-	private TextFileModel getModel() {
+	private TextFileDocument getModel() {
 		return _fileChooser.getModel();
 	}
 }

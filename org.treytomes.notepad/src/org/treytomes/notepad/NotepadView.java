@@ -10,8 +10,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
@@ -25,7 +23,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-public class NotepadView extends JFrame implements Observer {
+public class NotepadView extends JFrame {
 	
 	private static final String WINDOW_TITLE = "Notepad";
 	private static final int WINDOW_WIDTH = 450;
@@ -43,17 +41,16 @@ public class NotepadView extends JFrame implements Observer {
 	
 	private static final Logger LOGGER = Logger.getLogger(NotepadView.class.getName());
 
-	private TextFileModel _model;
+	private TextFileDocument _model;
 	private JTextArea _textArea;
 	private FileChooserView _fileChooserView;
 
-	public NotepadView(TextFileModel model) {
+	public NotepadView(TextFileDocument model) {
 		LOGGER.info("Loading the main window...");
 		
-		createTextArea();
-		
-		_fileChooserView = new FileChooserView(this);
 		setModel(model);
+		createTextArea();
+		_fileChooserView = new FileChooserView(this, model);
 		
 		createMenu();
 		
@@ -77,27 +74,33 @@ public class NotepadView extends JFrame implements Observer {
 		this(null);
 	}
 	
-	public TextFileModel getModel() {
+	public TextFileDocument getModel() {
 		return _model;
 	}
 	
-	public void setModel(TextFileModel model) {
+	public void setModel(TextFileDocument model) {
+		if (_model == model) {
+			return;
+		}
+		
 		LOGGER.info("Assigning a new model to the main window...");
 		
 		if (_model != null) {
 			LOGGER.info("Removing the old model.");
-			_model.deleteObserver(this);
-			_textArea.getDocument().removeDocumentListener(_model);
+			_model = null;
 		}
 		if (model == null) {
 			LOGGER.info("Input model is null; creating a new model.");
-			model = new TextFileModel();
+			model = new TextFileDocument();
 		}
 		_model = model;
-		_model.addObserver(this);
-		_textArea.getDocument().addDocumentListener(_model);
 		updateWindowTitle();
-		_fileChooserView.setModel(_model);
+		if (_textArea != null) {
+			_textArea.setDocument(_model);
+		}
+		if (_fileChooserView != null) {
+			_fileChooserView.setModel(_model);
+		}
 		
 		LOGGER.info("The new model is now assigned.");
 	}
@@ -110,13 +113,6 @@ public class NotepadView extends JFrame implements Observer {
 		_textArea.setText(value);
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof TextFileModel) {
-			updateWindowTitle();
-		}
-	}
-
 	private void createTextArea() {
 		JScrollPane scrollPane = new JScrollPane();
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -126,6 +122,7 @@ public class NotepadView extends JFrame implements Observer {
 		_textArea.setLineWrap(true);
 		scrollPane.setViewportView(_textArea);
 		_textArea.setWrapStyleWord(true);
+		_textArea.setDocument(_model);
 	}
 	
 	private void createMenu() {
@@ -146,6 +143,7 @@ public class NotepadView extends JFrame implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				_fileChooserView.openFile();
+				updateWindowTitle();
 			}
 		});
 		mntmOpen.setMnemonic('O');

@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,11 +13,9 @@ public class FileIO {
 	
 	private static final Logger LOGGER = Logger.getLogger(FileIO.class.getName());
 	
-	private static final Charset ENCODING = StandardCharsets.UTF_8;
+	private static final Charset ENCODING = Charset.defaultCharset();
 	
 	public static String readTextFile(File file) {
-		//file = new File("c:/GetWorkItems.txt");
-		
 		LOGGER.log(Level.INFO, "Reading text file: {0}", file.getName());
 		
 		StringBuilder sb = new StringBuilder();
