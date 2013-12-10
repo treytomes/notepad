@@ -5,12 +5,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PropertyAccessComponent implements IPropertyAccess {
+public class PropertyReadComponent implements IPropertyRead {
 	
 	private Map<String, Method> _properties;
-	private IPropertyAccess _parent;
+	private IPropertyRead _parent;
 
-	public PropertyAccessComponent(IPropertyAccess parent) {
+	public PropertyReadComponent(IPropertyRead parent) {
 		_parent = parent;
 		locateProperties();
 	}

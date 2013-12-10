@@ -15,7 +15,7 @@ public class PropertyLogFormatter extends Formatter {
 	
 	@Override
 	public String format(LogRecord record) {
-		PropertyAccessLogRecord propRecord = new PropertyAccessLogRecord(record);
+		PropertyReadLogRecord propRecord = new PropertyReadLogRecord(record);
 		
 		String outputMessage = _format;
 		

@@ -6,9 +6,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.treytomes.util.DateTime;
-import org.treytomes.util.IPropertyAccess;
+import org.treytomes.util.IPropertyRead;
 import org.treytomes.util.Property;
-import org.treytomes.util.PropertyAccessComponent;
+import org.treytomes.util.PropertyReadComponent;
 import org.treytomes.util.PropertyNotDefinedException;
 
 /**
@@ -19,19 +19,19 @@ import org.treytomes.util.PropertyNotDefinedException;
  * @author trey
  *
  */
-public class PropertyAccessLogRecord extends LogRecord implements IPropertyAccess {
+public class PropertyReadLogRecord extends LogRecord implements IPropertyRead {
 
 	private static final long serialVersionUID = 4165009369171268534L;
 	
 	private LogRecord _baseRecord;
-	private IPropertyAccess _propertyAccess;
+	private IPropertyRead _propertyReader;
 	
-	public PropertyAccessLogRecord(LogRecord baseRecord) {
+	public PropertyReadLogRecord(LogRecord baseRecord) {
 		super(baseRecord.getLevel(), baseRecord.getMessage());
 		
 		_baseRecord = baseRecord;
 		
-		_propertyAccess = new PropertyAccessComponent(this);
+		_propertyReader = new PropertyReadComponent(this);
 	}
 	
 	public LogRecord getBaseRecord() {
@@ -45,12 +45,12 @@ public class PropertyAccessLogRecord extends LogRecord implements IPropertyAcces
 	 */
 	@Override
 	public String[] getPropertyNames() {
-		return _propertyAccess.getPropertyNames();
+		return _propertyReader.getPropertyNames();
 	}
 	
 	@Override
 	public boolean isPropertyDefined(String propertyName) {
-		return _propertyAccess.isPropertyDefined(propertyName);
+		return _propertyReader.isPropertyDefined(propertyName);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class PropertyAccessLogRecord extends LogRecord implements IPropertyAcces
 	 * @throws PropertyNotDefinedException
 	 */
 	public Object getProperty(String propertyName) throws PropertyNotDefinedException {
-		return _propertyAccess.getProperty(propertyName);
+		return _propertyReader.getProperty(propertyName);
 	}
 	
 	@Override

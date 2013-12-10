@@ -1,8 +1,6 @@
 package org.treytomes.util;
 
-
-
-public interface IPropertyAccess {
+public interface IPropertyRead {
 	
 	/**
 	 * Get the names of all the defined properties.
