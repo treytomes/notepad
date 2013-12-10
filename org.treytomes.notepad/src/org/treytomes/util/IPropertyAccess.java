@@ -1,4 +1,5 @@
-package org.treytomes.logging;
+package org.treytomes.util;
+
 
 
 public interface IPropertyAccess {

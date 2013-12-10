@@ -3,6 +3,8 @@ package org.treytomes.logging;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+import org.treytomes.util.PropertyNotDefinedException;
+
 public class PropertyLogFormatter extends Formatter {
 	
 	private String _format;

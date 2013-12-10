@@ -1,4 +1,4 @@
-package org.treytomes.logging;
+package org.treytomes.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

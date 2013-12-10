@@ -5,6 +5,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import org.treytomes.util.DateTime;
+import org.treytomes.util.IPropertyAccess;
+import org.treytomes.util.Property;
+import org.treytomes.util.PropertyAccessComponent;
+import org.treytomes.util.PropertyNotDefinedException;
+
 /**
  * Access the properties of the LogRecord with simple text names.
  * Works by creating a proxy of the LogRecord class,
