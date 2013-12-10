@@ -3,24 +3,16 @@ package org.treytomes.notepad;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
 import javax.swing.JLabel;
-import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
+
+import org.treytomes.notepad.resources.IconSize;
+import org.treytomes.notepad.resources.NotepadIcon;
 
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -28,21 +20,15 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
 import java.awt.Font;
+import java.util.logging.Logger;
 
 public class AboutNotepad extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8373369369401968282L;
 	
-	private static final WindowListener closeWindow = new WindowAdapter() {
-		@Override
-		public void windowClosing(WindowEvent evt) {
-			evt.getWindow().setVisible(false);
-			evt.getWindow().dispose();
-		};
-	};
+	private static final Logger LOGGER = Logger.getLogger(AboutNotepad.class.getName());
+
+	private WindowCloseAction _closeWindowAction;
 	
 	private final JPanel contentPanel = new JPanel();
 
@@ -51,9 +37,14 @@ public class AboutNotepad extends JDialog {
 	 */
 	public AboutNotepad(JFrame parent) {
 		super(parent, "About Notepad", true);
+		
+		LOGGER.info("Loading the About dialog...");
+		
+		_closeWindowAction = new WindowCloseAction(this);
+		_closeWindowAction.setCloseOnEscape(true);
+		addWindowListener(_closeWindowAction);
+		
 		setResizable(false);
-		addWindowListener(closeWindow);
-		addEscapeListener();
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(32, 32, 408, 196);
@@ -84,7 +75,7 @@ public class AboutNotepad extends JDialog {
 			JLabel appIconLabel = new JLabel("");
 			contentPanel.add(appIconLabel, "1, 3, fill, top");
 			appIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			appIconLabel.setIcon(new ImageIcon(AboutNotepad.class.getResource("/org/treytomes/notepad/notepad_48.png")));
+			appIconLabel.setIcon(NotepadIcon.getIcon(IconSize.Size48));
 		}
 		{
 			JLabel descriptionLabel = new JLabel("<html>\r\nTrey Tomes<br />\r\nVersion 1.0<br />\r\nCopyright \u00A9 2013 Trey Tomes.  All rights reserved.\r\n</html>");
@@ -96,12 +87,7 @@ public class AboutNotepad extends JDialog {
 			getContentPane().add(buttonPanel, "1, 2, fill, bottom");
 			{
 				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent evt) {
-						dispatchEvent(new WindowEvent(AboutNotepad.this, WindowEvent.WINDOW_CLOSING));
-					}
-				});
+				okButton.addActionListener(_closeWindowAction);
 				okButton.setActionCommand("OK");
 				buttonPanel.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -109,18 +95,7 @@ public class AboutNotepad extends JDialog {
 		}
 		
 		setLocationRelativeTo(parent);
-	}
-
-	private void addEscapeListener() {
-		ActionListener escapeListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				dispatchEvent(new WindowEvent(AboutNotepad.this, WindowEvent.WINDOW_CLOSING));
-			}
-		};
-
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-
-		getRootPane().registerKeyboardAction(escapeListener, escapeStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		LOGGER.info("The About dialog is now loaded.");
 	}
 }

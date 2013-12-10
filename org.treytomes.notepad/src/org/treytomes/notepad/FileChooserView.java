@@ -17,15 +17,11 @@ public class FileChooserView implements Observer {
 	private TextFileModel _model;
 	private JFileChooser _fileChooser;
 	
-	public FileChooserView(Component parent, TextFileModel model) {
+	public FileChooserView(Component parent) {
 		_parent = parent;
-		_model = model;
+		setModel(null);
 		
 		configureFileChooser();
-	}
-	
-	public FileChooserView(Component parent) {
-		this(parent, new TextFileModel());
 	}
 	
 	public FileChooserView() {

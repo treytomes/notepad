@@ -8,12 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
@@ -32,38 +31,36 @@ public class NotepadView extends JFrame implements Observer {
 	private static final int WINDOW_WIDTH = 450;
 	private static final int WINDOW_HEIGHT = 300;
 
-	private static final String WINDOW_ICON_16 = "/org/treytomes/notepad/notepad_16.png";
-	private static final String WINDOW_ICON_24 = "/org/treytomes/notepad/notepad_24.png";
-	private static final String WINDOW_ICON_32 = "/org/treytomes/notepad/notepad_32.png";
-	private static final String WINDOW_ICON_48 = "/org/treytomes/notepad/notepad_48.png";
-	private static final String WINDOW_ICON_256 = "/org/treytomes/notepad/notepad_256.png";
+	private static final String WINDOW_ICON_16 = "/org/treytomes/notepad/resources/notepad_16.png";
+	private static final String WINDOW_ICON_24 = "/org/treytomes/notepad/resources/notepad_24.png";
+	private static final String WINDOW_ICON_32 = "/org/treytomes/notepad/resources/notepad_32.png";
+	private static final String WINDOW_ICON_48 = "/org/treytomes/notepad/resources/notepad_48.png";
+	private static final String WINDOW_ICON_256 = "/org/treytomes/notepad/resources/notepad_256.png";
 	
 	private static final Font FONT_DEFAULT = new Font("Lucida Console", Font.PLAIN, 14);
 
 	private static final long serialVersionUID = 2512504132006442564L;
 	
-	private static final WindowListener closeWindow = new WindowAdapter() {
-		@Override
-		public void windowClosing(WindowEvent evt) {
-			evt.getWindow().setVisible(false);
-			evt.getWindow().dispose();
-		};
-	};
+	private static final Logger LOGGER = Logger.getLogger(NotepadView.class.getName());
 
 	private TextFileModel _model;
 	private JTextArea _textArea;
 	private FileChooserView _fileChooserView;
 
-	public NotepadView() {
+	public NotepadView(TextFileModel model) {
+		LOGGER.info("Loading the main window...");
+		
 		createTextArea();
+		
+		_fileChooserView = new FileChooserView(this);
+		setModel(model);
+		
 		createMenu();
 		
-		setModel(null);
-		
 		setTitle(WINDOW_TITLE);
-		setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		setBounds(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		addWindowListener(closeWindow);
+		addWindowListener(new WindowCloseAction(this));
 		
 		setIconImages(Arrays.asList(new Image[] {
 			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_16)),
@@ -72,6 +69,12 @@ public class NotepadView extends JFrame implements Observer {
 			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_48)),
 			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_256)),
 		}));
+		
+		LOGGER.info("The main window is now loaded.");
+	}
+	
+	public NotepadView() {
+		this(null);
 	}
 	
 	public TextFileModel getModel() {
@@ -79,19 +82,24 @@ public class NotepadView extends JFrame implements Observer {
 	}
 	
 	public void setModel(TextFileModel model) {
+		LOGGER.info("Assigning a new model to the main window...");
+		
 		if (_model != null) {
+			LOGGER.info("Removing the old model.");
 			_model.deleteObserver(this);
 			_textArea.getDocument().removeDocumentListener(_model);
 		}
 		if (model == null) {
-			System.err.println("Input model is null; creating a new model.");
+			LOGGER.info("Input model is null; creating a new model.");
 			model = new TextFileModel();
 		}
 		_model = model;
 		_model.addObserver(this);
 		_textArea.getDocument().addDocumentListener(_model);
 		updateWindowTitle();
-		_fileChooserView = new FileChooserView(this, _model);
+		_fileChooserView.setModel(_model);
+		
+		LOGGER.info("The new model is now assigned.");
 	}
 	
 	public String getText() {
@@ -124,14 +132,14 @@ public class NotepadView extends JFrame implements Observer {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnfile = new JMenu("File");
-		mnfile.setMnemonic('F');
-		menuBar.add(mnfile);
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic('F');
+		menuBar.add(fileMenu);
 		
 		JMenuItem mntmNew = new JMenuItem("New");
 		mntmNew.setMnemonic('N');
 		mntmNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-		mnfile.add(mntmNew);
+		fileMenu.add(mntmNew);
 		
 		JMenuItem mntmOpen = new JMenuItem("Open...");
 		mntmOpen.addActionListener(new ActionListener() {
@@ -142,32 +150,32 @@ public class NotepadView extends JFrame implements Observer {
 		});
 		mntmOpen.setMnemonic('O');
 		mntmOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-		mnfile.add(mntmOpen);
+		fileMenu.add(mntmOpen);
 		
 		JMenuItem mntmSave = new JMenuItem("Save");
 		mntmSave.setMnemonic('S');
 		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-		mnfile.add(mntmSave);
+		fileMenu.add(mntmSave);
 		
 		JMenuItem mntmSaveAs = new JMenuItem("Save As...");
 		mntmSaveAs.addActionListener(new FileSaveAsAction(_fileChooserView));
 		mntmSaveAs.setMnemonic('A');
-		mnfile.add(mntmSaveAs);
+		fileMenu.add(mntmSaveAs);
 		
 		JSeparator separator_4 = new JSeparator();
-		mnfile.add(separator_4);
+		fileMenu.add(separator_4);
 		
 		JMenuItem mntmPageSetup = new JMenuItem("Page Setup...");
 		mntmPageSetup.setMnemonic('u');
-		mnfile.add(mntmPageSetup);
+		fileMenu.add(mntmPageSetup);
 		
 		JMenuItem mntmPrint = new JMenuItem("Print...");
 		mntmPrint.setMnemonic('P');
 		mntmPrint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
-		mnfile.add(mntmPrint);
+		fileMenu.add(mntmPrint);
 		
 		JSeparator separator_5 = new JSeparator();
-		mnfile.add(separator_5);
+		fileMenu.add(separator_5);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
@@ -176,75 +184,75 @@ public class NotepadView extends JFrame implements Observer {
 			}
 		});
 		mntmExit.setMnemonic('x');
-		mnfile.add(mntmExit);
+		fileMenu.add(mntmExit);
 		
-		JMenu mnEdit = new JMenu("Edit");
-		mnEdit.setMnemonic('E');
-		menuBar.add(mnEdit);
+		JMenu editMenu = new JMenu("Edit");
+		editMenu.setMnemonic('E');
+		menuBar.add(editMenu);
 		
 		JMenuItem mntmUndo = new JMenuItem("Undo");
 		mntmUndo.setMnemonic('U');
 		mntmUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmUndo);
+		editMenu.add(mntmUndo);
 		
 		JSeparator separator_1 = new JSeparator();
-		mnEdit.add(separator_1);
+		editMenu.add(separator_1);
 		
 		JMenuItem mntmCut = new JMenuItem("Cut");
 		mntmCut.setMnemonic('t');
 		mntmCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmCut);
+		editMenu.add(mntmCut);
 		
 		JMenuItem mntmCope = new JMenuItem("Copy");
 		mntmCope.setMnemonic('C');
 		mntmCope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmCope);
+		editMenu.add(mntmCope);
 		
 		JMenuItem mntmPaste = new JMenuItem("Paste");
 		mntmPaste.setMnemonic('P');
 		mntmPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmPaste);
+		editMenu.add(mntmPaste);
 		
 		JMenuItem mntmDelete = new JMenuItem("Delete");
 		mntmDelete.setMnemonic('l');
 		mntmDelete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-		mnEdit.add(mntmDelete);
+		editMenu.add(mntmDelete);
 		
 		JSeparator separator_2 = new JSeparator();
-		mnEdit.add(separator_2);
+		editMenu.add(separator_2);
 		
 		JMenuItem mntmFind = new JMenuItem("Find...");
 		mntmFind.setMnemonic('F');
 		mntmFind.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmFind);
+		editMenu.add(mntmFind);
 		
 		JMenuItem mntmFindNext = new JMenuItem("Find Next");
 		mntmFindNext.setMnemonic('N');
 		mntmFindNext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
-		mnEdit.add(mntmFindNext);
+		editMenu.add(mntmFindNext);
 		
 		JMenuItem mntmReplace = new JMenuItem("Replace...");
 		mntmReplace.setMnemonic('R');
 		mntmReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmReplace);
+		editMenu.add(mntmReplace);
 		
 		JMenuItem mntmGoto = new JMenuItem("Goto...");
 		mntmGoto.setMnemonic('G');
 		mntmGoto.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmGoto);
+		editMenu.add(mntmGoto);
 		
 		JSeparator separator_3 = new JSeparator();
-		mnEdit.add(separator_3);
+		editMenu.add(separator_3);
 		
 		JMenuItem mntmSelectAll = new JMenuItem("Select All");
 		mntmSelectAll.setMnemonic('A');
 		mntmSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-		mnEdit.add(mntmSelectAll);
+		editMenu.add(mntmSelectAll);
 		
 		JMenuItem mntmTimedate = new JMenuItem("Time/Date");
 		mntmTimedate.setMnemonic('D');
 		mntmTimedate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-		mnEdit.add(mntmTimedate);
+		editMenu.add(mntmTimedate);
 		
 		JMenu mnFormat = new JMenu("Format");
 		mnFormat.setMnemonic('o');
@@ -258,20 +266,20 @@ public class NotepadView extends JFrame implements Observer {
 		mntmFont.setMnemonic('F');
 		mnFormat.add(mntmFont);
 		
-		JMenu mnView = new JMenu("View");
-		mnView.setMnemonic('V');
-		menuBar.add(mnView);
+		JMenu viewMenu = new JMenu("View");
+		viewMenu.setMnemonic('V');
+		menuBar.add(viewMenu);
 		
 		JMenuItem mntmStatusBar = new JMenuItem("Status Bar");
 		mntmStatusBar.setMnemonic('S');
-		mnView.add(mntmStatusBar);
+		viewMenu.add(mntmStatusBar);
 		
 		JSeparator separator_6 = new JSeparator();
-		mnView.add(separator_6);
+		viewMenu.add(separator_6);
 		
 		JMenu mnChange = new JMenu("Change Look And Feel...");
 		mnChange.setMnemonic('C');
-		mnView.add(mnChange);
+		viewMenu.add(mnChange);
 		ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
 	    for (LookAndFeelInfo info : LookAndFeelManager.getInstalledLookAndFeels()) {
 	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem();
@@ -280,16 +288,16 @@ public class NotepadView extends JFrame implements Observer {
 	        mnChange.add(lookAndFeelMenuItem);
 	    }
 		
-		JMenu mnHelp = new JMenu("Help");
-		mnHelp.setMnemonic('H');
-		menuBar.add(mnHelp);
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic('H');
+		menuBar.add(helpMenu);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("View Help");
 		mntmNewMenuItem.setMnemonic('H');
-		mnHelp.add(mntmNewMenuItem);
+		helpMenu.add(mntmNewMenuItem);
 		
 		JSeparator separator = new JSeparator();
-		mnHelp.add(separator);
+		helpMenu.add(separator);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("About Notepad");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
@@ -298,7 +306,7 @@ public class NotepadView extends JFrame implements Observer {
 			}
 		});
 		mntmNewMenuItem_1.setMnemonic('A');
-		mnHelp.add(mntmNewMenuItem_1);
+		helpMenu.add(mntmNewMenuItem_1);
 	}
 	
 	/**
