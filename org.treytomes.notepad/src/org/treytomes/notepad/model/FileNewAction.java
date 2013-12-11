@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
 import org.treytomes.notepad.FileChooserView;
 import org.treytomes.notepad.SaveChangesDialog;
@@ -17,13 +18,11 @@ public class FileNewAction extends AbstractAction implements PropertyChangeListe
 	
 	private static final Logger LOGGER = Logger.getLogger(FileNewAction.class.getName());
 
-	private SaveChangesDialog _saveChanges;
+	private JFrame _parent;
 	private FileChooserView _fileChooser;
 	
-	public FileNewAction(SaveChangesDialog saveChanges, FileChooserView fileChooser) {
-		_saveChanges = saveChanges;
-		_saveChanges.addPropertyChangeListener(this);
-		
+	public FileNewAction(JFrame parent, FileChooserView fileChooser) {
+		_parent = parent;
 		_fileChooser = fileChooser;
 	}
 	
@@ -37,11 +36,13 @@ public class FileNewAction extends AbstractAction implements PropertyChangeListe
 	}
 
 	private void askIfUserWantsToSave() {
-		_saveChanges.setVisible(true);
+		SaveChangesDialog dialog = new SaveChangesDialog(_parent, getModel());
+		dialog.addPropertyChangeListener(this);
+		dialog.setVisible(true);
 	}
 	
 	private TextFileDocument getModel() {
-		return _saveChanges.getModel();
+		return _fileChooser.getModel();
 	}
 
 	@Override

@@ -143,7 +143,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		menuBar.add(fileMenu);
 		
 		JMenuItem newMenuItem = new JMenuItem("New");
-		newMenuItem.addActionListener(new FileNewAction(new SaveChangesDialog(this, getModel()), _fileChooser));
+		newMenuItem.addActionListener(new FileNewAction(this, _fileChooser));
 		newMenuItem.setMnemonic('N');
 		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		fileMenu.add(newMenuItem);

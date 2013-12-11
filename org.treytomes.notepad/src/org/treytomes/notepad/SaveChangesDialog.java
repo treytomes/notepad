@@ -67,6 +67,7 @@ public class SaveChangesDialog extends JDialog implements ActionListener {
 		
 		setModel(model);
 		setResizable(false);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(32, 32, 400, 150);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -86,30 +87,15 @@ public class SaveChangesDialog extends JDialog implements ActionListener {
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-			{
-				JButton saveButton = new JButton("Save");
-				saveButton.addActionListener(_closeWindowAction);
-				saveButton.addActionListener(this);
-				saveButton.setActionCommand(SaveFileChoice.Save.name());
-				saveButton.setMnemonic('S');
-				buttonPanel.add(saveButton);
-				getRootPane().setDefaultButton(saveButton);
-			}
-			{
-				JButton dontSaveButton = new JButton("Don't Save");
-				dontSaveButton.addActionListener(_closeWindowAction);
-				dontSaveButton.addActionListener(this);
-				dontSaveButton.setActionCommand(SaveFileChoice.DontSave.name());
-				dontSaveButton.setMnemonic('n');
-				buttonPanel.add(dontSaveButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(_closeWindowAction);
-				cancelButton.addActionListener(this);
-				cancelButton.setActionCommand(SaveFileChoice.Cancel.name());
-				cancelButton.setMnemonic('C');
-				buttonPanel.add(cancelButton);
+			
+			for (SaveFileChoice choice : SaveFileChoice.values()) {
+				JButton button = choice.createButton();
+				button.addActionListener(_closeWindowAction);
+				button.addActionListener(this);
+				buttonPanel.add(button);
+				if (choice.isDefaultChoice()) {
+					getRootPane().setDefaultButton(button);
+				}
 			}
 		}
 		
