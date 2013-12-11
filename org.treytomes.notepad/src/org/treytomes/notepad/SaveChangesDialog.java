@@ -12,30 +12,61 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 
-public class SaveChangesDialog extends JDialog {
+import org.treytomes.notepad.model.SaveFileChoice;
+import org.treytomes.notepad.model.TextFileDocument;
+import org.treytomes.notepad.model.WindowCloseAction;
 
+/**
+ * 1 property is exposed to the PropertyChangeListener:
+ * 	* saveFile
+ * 
+ * @author ttomes
+ *
+ */
+public class SaveChangesDialog extends JDialog implements ActionListener {
+
+	public static final String PROPERTY_SAVEFILE = "saveFile";
+		
 	private static final long serialVersionUID = -4195587187238713682L;
 	
-	private static final Logger LOGGER = Logger.getLogger(AboutNotepadDialog.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SaveChangesDialog.class.getName());
+	
+	private PropertyChangeSupport _propertyChangeSupport;
 
 	private final JPanel contentPanel = new JPanel();
 	private JLabel messageLabel;
+	private TextFileDocument _model;
+	private WindowCloseAction _closeWindowAction;
+	private SaveFileChoice _saveFile;
 
 	/**
 	 * Create the dialog.
 	 */
-	public SaveChangesDialog(JFrame parent) {
+	public SaveChangesDialog(JFrame parent, TextFileDocument model) {
+		super(parent, parent.getTitle(), true);
+		
 		LOGGER.info("Loading the Save Changes dialog...");
 		
+		_propertyChangeSupport = new PropertyChangeSupport(this);
+		
+		setSaveFile(null);
+		
+		_closeWindowAction = new WindowCloseAction(this);
+		_closeWindowAction.setCloseOnEscape(true);
+		addWindowListener(_closeWindowAction);
+		
+		setModel(model);
 		setResizable(false);
-		setTitle("Notepad");
-		setModalityType(ModalityType.APPLICATION_MODAL);
-		setModal(true);
 		setBounds(32, 32, 400, 150);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -57,21 +88,27 @@ public class SaveChangesDialog extends JDialog {
 			getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 			{
 				JButton saveButton = new JButton("Save");
+				saveButton.addActionListener(_closeWindowAction);
+				saveButton.addActionListener(this);
+				saveButton.setActionCommand(SaveFileChoice.Save.name());
 				saveButton.setMnemonic('S');
-				saveButton.setActionCommand("OK");
 				buttonPanel.add(saveButton);
 				getRootPane().setDefaultButton(saveButton);
 			}
 			{
 				JButton dontSaveButton = new JButton("Don't Save");
+				dontSaveButton.addActionListener(_closeWindowAction);
+				dontSaveButton.addActionListener(this);
+				dontSaveButton.setActionCommand(SaveFileChoice.DontSave.name());
 				dontSaveButton.setMnemonic('n');
-				dontSaveButton.setActionCommand("Cancel");
 				buttonPanel.add(dontSaveButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(_closeWindowAction);
+				cancelButton.addActionListener(this);
+				cancelButton.setActionCommand(SaveFileChoice.Cancel.name());
 				cancelButton.setMnemonic('C');
-				cancelButton.setActionCommand("Cancel");
 				buttonPanel.add(cancelButton);
 			}
 		}
@@ -79,5 +116,48 @@ public class SaveChangesDialog extends JDialog {
 		setLocationRelativeTo(parent);
 		
 		LOGGER.info("The About dialog is now loaded.");
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		_propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		_propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+	
+	public TextFileDocument getModel() {
+		return _model;
+	}
+	
+	public void setModel(TextFileDocument model) {
+		if (_model == model) {
+			return;
+		}
+		
+		LOGGER.log(Level.INFO, "Assigning a new model.");
+		if (model == null) {
+			LOGGER.log(Level.WARNING, "Input model is null; creating a new model.");
+			model = new TextFileDocument();
+		}
+		_model = model;
+	}
+
+	public SaveFileChoice getSaveFile() {
+		return _saveFile;
+	}
+	
+	public void setSaveFile(SaveFileChoice saveFile) {
+		if (_saveFile != saveFile) {
+			SaveFileChoice oldValue = _saveFile;
+			_saveFile = saveFile;
+			_propertyChangeSupport.firePropertyChange(PROPERTY_SAVEFILE, oldValue, _saveFile);
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		setVisible(false);
+		setSaveFile(SaveFileChoice.valueOf(evt.getActionCommand()));
 	}
 }

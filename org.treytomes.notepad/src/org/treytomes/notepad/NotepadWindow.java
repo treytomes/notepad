@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.treytomes.notepad.model.FileNewAction;
 import org.treytomes.notepad.model.FileOpenAction;
 import org.treytomes.notepad.model.FileSaveAction;
 import org.treytomes.notepad.model.FileSaveAsAction;
@@ -114,8 +115,8 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getSource() instanceof TextFileDocument) {
 			switch (evt.getPropertyName()) {
-			case "needsSave":
-			case "filename":
+			case TextFileDocument.PROPERTY_NEEDSSAVE:
+			case TextFileDocument.PROPERTY_FILENAME:
 				updateWindowTitle();
 			}
 		}
@@ -142,6 +143,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		menuBar.add(fileMenu);
 		
 		JMenuItem newMenuItem = new JMenuItem("New");
+		newMenuItem.addActionListener(new FileNewAction(new SaveChangesDialog(this, getModel()), _fileChooser));
 		newMenuItem.setMnemonic('N');
 		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		fileMenu.add(newMenuItem);

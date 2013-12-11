@@ -24,13 +24,14 @@ import org.treytomes.util.FileIO;
  */
 public class TextFileDocument extends PlainDocument implements DocumentListener {
 	
+	public static final String PROPERTY_NEEDSSAVE = "needsSave";
+	public static final String PROPERTY_FILENAME = "filename";
+	
 	private static final Logger LOGGER = Logger.getLogger(TextFileDocument.class.getName());
 	
 	private static final long serialVersionUID = 3307261840579009310L;
 
 	private static final String DEFAULT_FILENAME = "";
-	private static final String PROPERTY_NEEDSSAVE = "needsSave";
-	private static final String PROPERTY_FILENAME = "filename";
 	
 	private PropertyChangeSupport _propertyChangeSupport;
 	
@@ -43,8 +44,7 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 		addDocumentListener(this);
 		_propertyChangeSupport = new PropertyChangeSupport(this);
 		
-		_file = new File(DEFAULT_FILENAME);
-		_needsSave = false;
+		newFile();
 	}
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -57,10 +57,11 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 	
 	private void setFile(File file) {
 		File oldFile = _file;
+		String oldFilename = (_file == null) ? DEFAULT_FILENAME : _file.getName();
 		_file = file;
 		
-		if ((_file != oldFile) && !_file.getName().equals(oldFile.getName())) {
-			_propertyChangeSupport.firePropertyChange(PROPERTY_FILENAME, oldFile.getName(), _file.getName());
+		if ((_file != oldFile) && !_file.getName().equals(oldFilename)) {
+			_propertyChangeSupport.firePropertyChange(PROPERTY_FILENAME, oldFilename, _file.getName());
 		}
 	}
 	
@@ -76,11 +77,11 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 		return _file.getName().length() == 0;
 	}
 	
-	private void setNeedsSave(boolean value) {
-		if (_needsSave != value) {
+	private void setNeedsSave(boolean needsSave) {
+		if (_needsSave != needsSave) {
 			boolean oldValue = _needsSave;
-			_needsSave = value;
-			_propertyChangeSupport.firePropertyChange(PROPERTY_NEEDSSAVE, oldValue, value);
+			_needsSave = needsSave;
+			_propertyChangeSupport.firePropertyChange(PROPERTY_NEEDSSAVE, oldValue, _needsSave);
 		}
 	}
 	
@@ -91,6 +92,17 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 	private void setContents(String contents) throws BadLocationException {
 		remove(0, getLength());
 		insertString(0, contents, null);
+	}
+
+	public void newFile() {
+		LOGGER.log(Level.INFO, "Creating a new file.");
+		setFile(new File(DEFAULT_FILENAME));
+		try {
+			setContents("");
+			setNeedsSave(false);
+		} catch (BadLocationException e) {
+			LOGGER.log(Level.WARNING, "Unable to clear the editor contents.");
+		}
 	}
 	
 	public void open(File file) {

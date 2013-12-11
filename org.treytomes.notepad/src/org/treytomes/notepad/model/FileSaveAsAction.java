@@ -21,7 +21,7 @@ public class FileSaveAsAction extends AbstractAction implements DocumentListener
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		_fileChooser.saveFileAs();
+		saveFileAs();
 	}
 
 	@Override
@@ -41,6 +41,10 @@ public class FileSaveAsAction extends AbstractAction implements DocumentListener
 
 	public void update() {
 		setEnabled(getModel().getNeedsSave());
+	}
+	
+	public void saveFileAs() {
+		_fileChooser.saveFileAs();
 	}
 	
 	protected TextFileDocument getModel() {

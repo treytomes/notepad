@@ -14,16 +14,19 @@ public class FileSaveAction extends FileSaveAsAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (getModel().isUntitled()) {
-			super.actionPerformed(e);
-		} else {
-			getModel().save();
-		}
-
+		saveFile();
 	}
 
 	@Override
 	public void update() {
 		setEnabled(getModel().getNeedsSave() && !getModel().isUntitled());
+	}
+	
+	public void saveFile() {
+		if (getModel().isUntitled()) {
+			saveFileAs();
+		} else {
+			getModel().save();
+		}
 	}
 }
