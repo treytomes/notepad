@@ -9,8 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import java.awt.Font;
-import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +23,7 @@ import javax.swing.SwingConstants;
 import org.treytomes.notepad.model.SaveFileChoice;
 import org.treytomes.notepad.model.TextFileDocument;
 import org.treytomes.notepad.model.WindowCloseAction;
+import org.treytomes.notepad.resources.FontFactory;
 
 /**
  * 1 property is exposed to the PropertyChangeListener:
@@ -71,15 +70,14 @@ public class SaveChangesDialog extends JDialog implements ActionListener {
 		setBounds(32, 32, 400, 150);
 		
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBackground(Color.WHITE);
+		contentPanel.setBackground(SystemColor.window);
 		contentPanel.setBorder(new LineBorder(SystemColor.controlHighlight));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		{
 			messageLabel = new JLabel("Do you want to save changes to Untitled?");
 			messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			messageLabel.setForeground(SystemColor.textHighlight);
-			messageLabel.setBackground(Color.WHITE);
-			messageLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			messageLabel.setFont(FontFactory.getMessageTextFont());
 		}
 		contentPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		contentPanel.add(messageLabel);

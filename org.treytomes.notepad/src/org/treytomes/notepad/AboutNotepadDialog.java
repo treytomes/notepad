@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
 
 import org.treytomes.notepad.model.WindowCloseAction;
+import org.treytomes.notepad.resources.FontFactory;
 import org.treytomes.notepad.resources.ImageSize;
 import org.treytomes.notepad.resources.NotepadIcon;
 import org.treytomes.notepad.resources.TextResources;
@@ -21,7 +22,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
-import java.awt.Font;
 import java.util.logging.Logger;
 
 public class AboutNotepadDialog extends JDialog {
@@ -75,7 +75,7 @@ public class AboutNotepadDialog extends JDialog {
 				RowSpec.decode("top:default:grow"),}));
 		{
 			JLabel titleLabel = new JLabel("Notepad");
-			titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 36));
+			titleLabel.setFont(FontFactory.getAboutTitleFont());
 			contentPanel.add(titleLabel, "2, 1, fill, fill");
 		}
 		{

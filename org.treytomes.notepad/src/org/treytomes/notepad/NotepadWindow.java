@@ -1,7 +1,6 @@
 package org.treytomes.notepad;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -29,6 +28,7 @@ import org.treytomes.notepad.model.FileSaveAsAction;
 import org.treytomes.notepad.model.LookAndFeelButtonModel;
 import org.treytomes.notepad.model.LookAndFeelManager;
 import org.treytomes.notepad.model.TextFileDocument;
+import org.treytomes.notepad.resources.FontFactory;
 import org.treytomes.notepad.resources.NotepadIcon;
 
 public class NotepadWindow extends JFrame implements PropertyChangeListener {
@@ -37,8 +37,6 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 	private static final int WINDOW_WIDTH = 600;
 	private static final int WINDOW_HEIGHT = 400;
 	
-	private static final Font FONT_DEFAULT = new Font("Lucida Console", Font.PLAIN, 14);
-
 	private static final long serialVersionUID = 2512504132006442564L;
 	
 	private static final Logger LOGGER = Logger.getLogger(NotepadWindow.class.getName());
@@ -130,7 +128,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		
 		_textArea = new JTextArea();
-		_textArea.setFont(FONT_DEFAULT);
+		_textArea.setFont(FontFactory.getDocumentTextFont());
 		_textArea.setLineWrap(true);
 		scrollPane.setViewportView(_textArea);
 		_textArea.setWrapStyleWord(true);
