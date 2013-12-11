@@ -14,6 +14,7 @@ import javax.swing.JSeparator;
 import org.treytomes.notepad.model.WindowCloseAction;
 import org.treytomes.notepad.resources.ImageSize;
 import org.treytomes.notepad.resources.NotepadIcon;
+import org.treytomes.notepad.resources.TextResources;
 
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -28,7 +29,7 @@ public class AboutNotepadDialog extends JDialog {
 	private static final long serialVersionUID = -8373369369401968282L;
 	
 	private static final Logger LOGGER = Logger.getLogger(AboutNotepadDialog.class.getName());
-	private static final String HTML_DESCRIPTION = "<html>\r\nTrey Tomes<br />\r\nVersion 1.0<br />\r\nCopyright \u00A9 2013 Trey Tomes.  All rights reserved.\r\n</html>";
+	private static final String HTML_DESCRIPTION = TextResources.getAboutNotepadHtml();
 
 	private WindowCloseAction _closeWindowAction;
 
