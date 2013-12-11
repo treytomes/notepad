@@ -1,7 +1,11 @@
 package org.treytomes.notepad.resources;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -14,26 +18,30 @@ public class NotepadIcon {
 	private static final String WINDOW_ICON_48 = "notepad_48.png";
 	private static final String WINDOW_ICON_256 = "notepad_256.png";
 	
-	public static ImageIcon[] getAll() {
-		return new ImageIcon[] {
-			getIcon(IconSize.Size16),
-			getIcon(IconSize.Size24),
-			getIcon(IconSize.Size32),
-			getIcon(IconSize.Size48),
-			getIcon(IconSize.Size256)
-		};
+	public static List<Image> getAll() {
+		return Arrays.asList(new Image[] {
+			getImage(ImageSize.Size16),
+			getImage(ImageSize.Size24),
+			getImage(ImageSize.Size32),
+			getImage(ImageSize.Size48),
+			getImage(ImageSize.Size256)
+		});
 	}
 	
-	public static ImageIcon getIcon(IconSize size) {
+	public static ImageIcon getIcon(ImageSize size) {
+		return new ImageIcon(getImage(size));
+	}
+	
+	public static Image getImage(ImageSize size) {
 		URL resource = getPathForSize(size);
 		if (resource == null) {
 			return null;
 		} else {
-			return new ImageIcon(resource);
+			return Toolkit.getDefaultToolkit().getImage(resource);
 		}
 	}
 	
-	private static URL getPathForSize(IconSize size) {
+	private static URL getPathForSize(ImageSize size) {
 		String filename = getFilenameForSize(size);
 		if ((filename == null) || (filename.length() == 0)) {
 			return null;
@@ -42,7 +50,7 @@ public class NotepadIcon {
 		}
 	}
 	
-	private static String getFilenameForSize(IconSize size) {
+	private static String getFilenameForSize(ImageSize size) {
 		switch (size) {
 		case Size16:
 			return WINDOW_ICON_16;

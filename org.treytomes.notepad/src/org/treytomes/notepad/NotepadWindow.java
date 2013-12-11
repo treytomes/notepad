@@ -2,15 +2,12 @@ package org.treytomes.notepad;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
@@ -30,18 +27,13 @@ import org.treytomes.notepad.model.LookAndFeelButtonModel;
 import org.treytomes.notepad.model.LookAndFeelManager;
 import org.treytomes.notepad.model.TextFileDocument;
 import org.treytomes.notepad.model.WindowCloseAction;
+import org.treytomes.notepad.resources.NotepadIcon;
 
 public class NotepadWindow extends JFrame implements PropertyChangeListener {
 	
 	private static final String WINDOW_TITLE = "Notepad";
 	private static final int WINDOW_WIDTH = 600;
 	private static final int WINDOW_HEIGHT = 400;
-
-	private static final String WINDOW_ICON_16 = "/org/treytomes/notepad/resources/notepad_16.png";
-	private static final String WINDOW_ICON_24 = "/org/treytomes/notepad/resources/notepad_24.png";
-	private static final String WINDOW_ICON_32 = "/org/treytomes/notepad/resources/notepad_32.png";
-	private static final String WINDOW_ICON_48 = "/org/treytomes/notepad/resources/notepad_48.png";
-	private static final String WINDOW_ICON_256 = "/org/treytomes/notepad/resources/notepad_256.png";
 	
 	private static final Font FONT_DEFAULT = new Font("Lucida Console", Font.PLAIN, 14);
 
@@ -67,13 +59,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addWindowListener(new WindowCloseAction(this));
 		
-		setIconImages(Arrays.asList(new Image[] {
-			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_16)),
-			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_24)),
-			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_32)),
-			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_48)),
-			Toolkit.getDefaultToolkit().getImage(Notepad.class.getResource(WINDOW_ICON_256)),
-		}));
+		setIconImages(NotepadIcon.getAll());
 		
 		LOGGER.info("The main window is now loaded.");
 	}

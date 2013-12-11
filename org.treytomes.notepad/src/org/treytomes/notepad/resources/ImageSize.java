@@ -1,6 +1,6 @@
 package org.treytomes.notepad.resources;
 
-public enum IconSize {
+public enum ImageSize {
 
 	Size16(16),
 	Size24(24),
@@ -10,7 +10,7 @@ public enum IconSize {
 	
 	private int _size;
 	
-	IconSize(int size) {
+	ImageSize(int size) {
 		_size = size;
 	}
 	

@@ -12,7 +12,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
 
 import org.treytomes.notepad.model.WindowCloseAction;
-import org.treytomes.notepad.resources.IconSize;
+import org.treytomes.notepad.resources.ImageSize;
 import org.treytomes.notepad.resources.NotepadIcon;
 
 import com.jgoodies.forms.layout.FormLayout;
@@ -85,7 +85,7 @@ public class AboutNotepadDialog extends JDialog {
 			JLabel appIconLabel = new JLabel("");
 			contentPanel.add(appIconLabel, "1, 3, fill, top");
 			appIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			appIconLabel.setIcon(NotepadIcon.getIcon(IconSize.Size48));
+			appIconLabel.setIcon(NotepadIcon.getIcon(ImageSize.Size48));
 		}
 		
 		contentPanel.add(new JLabel(HTML_DESCRIPTION), "2, 3, fill, top");
