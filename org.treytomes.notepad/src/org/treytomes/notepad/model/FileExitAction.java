@@ -1,27 +1,28 @@
 package org.treytomes.notepad.model;
 
-import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 
 import org.treytomes.notepad.FileChooserView;
 import org.treytomes.notepad.SaveChangesDialog;
 
-public class FileNewAction extends AbstractAction implements PropertyChangeListener {
+public class FileExitAction extends WindowCloseAction implements PropertyChangeListener {
 
-	private static final long serialVersionUID = -7810744733007468753L;
+	private static final long serialVersionUID = -6555200295966128050L;
 	
-	private static final Logger LOGGER = Logger.getLogger(FileNewAction.class.getName());
-
+	private static final Logger LOGGER = Logger.getLogger(FileExitAction.class.getName());
+	
 	private JFrame _parent;
 	private FileChooserView _fileChooser;
 	
-	public FileNewAction(JFrame parent, FileChooserView fileChooser) {
+	public FileExitAction(JFrame parent, FileChooserView fileChooser) {
+		super(parent);
+		
 		_parent = parent;
 		_fileChooser = fileChooser;
 	}
@@ -31,11 +32,11 @@ public class FileNewAction extends AbstractAction implements PropertyChangeListe
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void windowClosing(WindowEvent e) {
 		if (getModel().getNeedsSave()) {
 			askIfUserWantsToSave();
 		} else {
-			getModel().newFile();
+			super.windowClosing(e);
 		}
 	}
 
@@ -56,15 +57,15 @@ public class FileNewAction extends AbstractAction implements PropertyChangeListe
 					LOGGER.log(Level.INFO, "Saving file.");
 					new FileSaveAction(_fileChooser).saveFile();
 					if (!getModel().getNeedsSave()) { // was the save operation successful?
-						getModel().newFile();
+						closeWindow();
 					}
 					break;
 				case DontSave:
 					LOGGER.log(Level.INFO, "Will not save file.");
-					getModel().newFile();
+					closeWindow();
 					break;
 				case Cancel:
-					LOGGER.log(Level.INFO, "Canceling the 'New File' action.");
+					LOGGER.log(Level.INFO, "Canceling the 'Exit' action.");
 					break;
 				}
 				break;

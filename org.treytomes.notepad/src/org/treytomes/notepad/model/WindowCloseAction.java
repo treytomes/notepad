@@ -25,6 +25,8 @@ public class WindowCloseAction extends AbstractAction implements WindowListener 
 	private boolean _closeOnEscape;
 	
 	public WindowCloseAction(Window window) {
+		super("Exit");
+		
 		_window = window;
 		_actionNameCloseWindow = String.format("%s.%s", _window.getClass().getName(), ACTION_CLOSEWINDOW);
 		_closeOnEscape = false;
@@ -47,10 +49,11 @@ public class WindowCloseAction extends AbstractAction implements WindowListener 
 			removeActionMap();
 		}
 	}
-
 	
-	@Override
-	public void windowClosing(WindowEvent e) {		
+	/**
+	 * Called from within the windowClosing event.
+	 */
+	public void closeWindow() {
 		if (getCloseOnEscape()) {
 			removeActionMap();
 		}
@@ -60,8 +63,12 @@ public class WindowCloseAction extends AbstractAction implements WindowListener 
 		LOGGER.log(Level.INFO, "Closing the {0} window...", windowName);
 		_window.setVisible(false);
 		_window.dispose();
-
 		LOGGER.log(Level.INFO, "The {0} window is now closed.", windowName);
+	}
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		closeWindow();
 	}
 
 	@Override
