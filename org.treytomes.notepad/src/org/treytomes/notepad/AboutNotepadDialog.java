@@ -1,10 +1,10 @@
 package org.treytomes.notepad;
 
 import java.awt.FlowLayout;
+import java.awt.Frame;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -36,7 +36,7 @@ public class AboutNotepadDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public AboutNotepadDialog(JFrame parent) {
+	public AboutNotepadDialog(Frame parent) {
 		super(parent, "About Notepad", true);
 		
 		LOGGER.info("Loading the About dialog...");

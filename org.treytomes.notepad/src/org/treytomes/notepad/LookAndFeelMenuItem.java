@@ -14,9 +14,14 @@ public class LookAndFeelMenuItem extends JRadioButtonMenuItem implements ActionL
 	
 	private LookAndFeelButtonModel _lookAndFeelModel;
 	
-	public LookAndFeelMenuItem() {
+	public LookAndFeelMenuItem(LookAndFeelButtonModel model) {
+		setModel(model);
 		addActionListener(this);
 		_lookAndFeelModel = null;
+	}
+	
+	public LookAndFeelMenuItem() {
+		this(null);
 	}
 	
 	@Override

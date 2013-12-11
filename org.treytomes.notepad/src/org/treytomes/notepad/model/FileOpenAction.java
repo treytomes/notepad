@@ -13,6 +13,8 @@ public class FileOpenAction extends AbstractAction {
 	private FileChooserView _fileChooser;
 	
 	public FileOpenAction(FileChooserView fileChooser) {
+		super("Open...");
+		
 		_fileChooser = fileChooser;
 	}
 

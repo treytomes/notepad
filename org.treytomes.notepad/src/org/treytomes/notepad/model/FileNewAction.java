@@ -22,6 +22,8 @@ public class FileNewAction extends AbstractAction implements PropertyChangeListe
 	private FileChooserView _fileChooser;
 	
 	public FileNewAction(JFrame parent, FileChooserView fileChooser) {
+		super("New");
+		
 		_parent = parent;
 		_fileChooser = fileChooser;
 	}

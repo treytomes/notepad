@@ -1,22 +1,33 @@
 package org.treytomes.notepad.model;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.treytomes.notepad.FileChooserView;
 
-public class FileSaveAsAction extends AbstractAction implements DocumentListener {
+public class FileSaveAsAction extends AbstractAction implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 8011881956860273769L;
 	
+	private static final Logger LOGGER = Logger.getLogger(FileSaveAsAction.class.getName());
+	
 	private FileChooserView _fileChooser;
 	
-	public FileSaveAsAction(FileChooserView fileChooser) {
+	protected FileSaveAsAction(String name, FileChooserView fileChooser) {
+		super(name);
+		
 		_fileChooser = fileChooser;
-		getModel().addDocumentListener(this);
+		getModel().addPropertyChangeListener(this);
+		updateEnabled();
+	}
+	
+	public FileSaveAsAction(FileChooserView fileChooser) {
+		this("Save As...", fileChooser);
 	}
 
 	@Override
@@ -25,21 +36,18 @@ public class FileSaveAsAction extends AbstractAction implements DocumentListener
 	}
 
 	@Override
-	public void changedUpdate(DocumentEvent evt) {
-		update();
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getSource() instanceof TextFileDocument) {
+			switch (evt.getPropertyName()) {
+			case "needsSave":
+				LOGGER.log(Level.INFO, "Updating saved state.");
+				updateEnabled();
+				break;
+			}
+		}
 	}
-
-	@Override
-	public void insertUpdate(DocumentEvent evt) {
-		update();
-	}
-
-	@Override
-	public void removeUpdate(DocumentEvent evt) {
-		update();
-	}
-
-	public void update() {
+	
+	protected void updateEnabled() {
 		setEnabled(getModel().getNeedsSave());
 	}
 	

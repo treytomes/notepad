@@ -1,8 +1,6 @@
 package org.treytomes.notepad;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -10,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -25,6 +24,8 @@ import org.treytomes.notepad.model.FileNewAction;
 import org.treytomes.notepad.model.FileOpenAction;
 import org.treytomes.notepad.model.FileSaveAction;
 import org.treytomes.notepad.model.FileSaveAsAction;
+import org.treytomes.notepad.model.FormatWordWrapAction;
+import org.treytomes.notepad.model.HelpAboutNotepad;
 import org.treytomes.notepad.model.LookAndFeelButtonModel;
 import org.treytomes.notepad.model.LookAndFeelManager;
 import org.treytomes.notepad.model.TextFileDocument;
@@ -150,26 +151,23 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic('F');
 		
-		JMenuItem newMenuItem = new JMenuItem("New");
-		newMenuItem.addActionListener(new FileNewAction(this, _fileChooser));
+		JMenuItem newMenuItem = new JMenuItem(new FileNewAction(this, _fileChooser));
 		newMenuItem.setMnemonic('N');
 		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		fileMenu.add(newMenuItem);
 		
-		JMenuItem openMenuItem = new JMenuItem("Open...");
-		openMenuItem.addActionListener(new FileOpenAction(_fileChooser));
+		JMenuItem openMenuItem = new JMenuItem(new FileOpenAction(_fileChooser));
 		openMenuItem.setMnemonic('O');
 		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		fileMenu.add(openMenuItem);
 		
-		JMenuItem saveMenuItem = new JMenuItem("Save");
-		saveMenuItem.addActionListener(new FileSaveAction(_fileChooser));
+		JMenuItem saveMenuItem = new JMenuItem(new FileSaveAction(_fileChooser));
 		saveMenuItem.setMnemonic('S');
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		saveMenuItem.setEnabled(false);
 		fileMenu.add(saveMenuItem);
 		
-		JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
-		saveAsMenuItem.addActionListener(new FileSaveAsAction(_fileChooser));
+		JMenuItem saveAsMenuItem = new JMenuItem(new FileSaveAsAction(_fileChooser));
 		saveAsMenuItem.setMnemonic('A');
 		fileMenu.add(saveAsMenuItem);
 		
@@ -186,8 +184,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		
 		fileMenu.add(new JSeparator());
 		
-		JMenuItem exitMenuItem = new JMenuItem("Exit");
-		exitMenuItem.addActionListener(_closeWindowAction);
+		JMenuItem exitMenuItem = new JMenuItem(_closeWindowAction);
 		exitMenuItem.setMnemonic('x');
 		fileMenu.add(exitMenuItem);
 		
@@ -266,8 +263,9 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		JMenu formatMenu = new JMenu("Format");
 		formatMenu.setMnemonic('o');
 		
-		JMenuItem wordWrapMenuItem = new JMenuItem("Word Wrap");
+		JCheckBoxMenuItem wordWrapMenuItem = new JCheckBoxMenuItem(new FormatWordWrapAction(_textArea));
 		wordWrapMenuItem.setMnemonic('W');
+		wordWrapMenuItem.setState(_textArea.getLineWrap());
 		formatMenu.add(wordWrapMenuItem);
 		
 		JMenuItem fontMenuItem = new JMenuItem("Font...");
@@ -292,8 +290,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		viewMenu.add(changeLookMenuItem);
 		ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
 	    for (LookAndFeelInfo info : LookAndFeelManager.getInstalledLookAndFeels()) {
-	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem();
-	    	lookAndFeelMenuItem.setModel(new LookAndFeelButtonModel(this, info));
+	    	JMenuItem lookAndFeelMenuItem = new LookAndFeelMenuItem(new LookAndFeelButtonModel(this, info));
 	        lookAndFeelButtonGroup.add(lookAndFeelMenuItem);
 	        changeLookMenuItem.add(lookAndFeelMenuItem);
 	    }
@@ -311,12 +308,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		
 		helpMenu.add(new JSeparator());
 		
-		JMenuItem aboutMenuItem = new JMenuItem("About Notepad");
-		aboutMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				new AboutNotepadDialog(NotepadWindow.this).setVisible(true);
-			}
-		});
+		JMenuItem aboutMenuItem = new JMenuItem(new HelpAboutNotepad(this));
 		aboutMenuItem.setMnemonic('A');
 		helpMenu.add(aboutMenuItem);
 		
