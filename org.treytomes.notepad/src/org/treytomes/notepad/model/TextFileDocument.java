@@ -56,11 +56,11 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 	}
 	
 	private void setFile(File file) {
-		String oldFilename = _file.getName();
+		File oldFile = _file;
 		_file = file;
 		
-		if (!_file.getName().equals(oldFilename)) {
-			_propertyChangeSupport.firePropertyChange(PROPERTY_FILENAME, oldFilename, _file.getName());
+		if ((_file != oldFile) && !_file.getName().equals(oldFile.getName())) {
+			_propertyChangeSupport.firePropertyChange(PROPERTY_FILENAME, oldFile.getName(), _file.getName());
 		}
 	}
 	
@@ -124,6 +124,9 @@ public class TextFileDocument extends PlainDocument implements DocumentListener 
 		}
 	}
 
+	public void save() {
+		save(_file);
+	}
 	
 	@Override
 	public void changedUpdate(DocumentEvent e) {

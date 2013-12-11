@@ -40,10 +40,10 @@ public class FileSaveAsAction extends AbstractAction implements DocumentListener
 	}
 
 	public void update() {
-		setEnabled(getModel().getNeedsSave()); // && _model.isUntitled());
+		setEnabled(getModel().getNeedsSave());
 	}
 	
-	private TextFileDocument getModel() {
+	protected TextFileDocument getModel() {
 		return _fileChooser.getModel();
 	}
 }

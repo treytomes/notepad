@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.treytomes.notepad.model.FileOpenAction;
+import org.treytomes.notepad.model.FileSaveAction;
 import org.treytomes.notepad.model.FileSaveAsAction;
 import org.treytomes.notepad.model.LookAndFeelButtonModel;
 import org.treytomes.notepad.model.LookAndFeelManager;
@@ -152,6 +153,7 @@ public class NotepadWindow extends JFrame implements PropertyChangeListener {
 		fileMenu.add(openMenuItem);
 		
 		JMenuItem saveMenuItem = new JMenuItem("Save");
+		saveMenuItem.addActionListener(new FileSaveAction(_fileChooser));
 		saveMenuItem.setMnemonic('S');
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		fileMenu.add(saveMenuItem);
