@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="about.xsl" type="text/xsl" ?>
+
+<about>
+	<application>Notepad</application>
+	<author>Trey Tomes</author>
+	<version>1.0</version>
+</about>
